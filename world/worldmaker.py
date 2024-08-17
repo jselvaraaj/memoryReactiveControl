@@ -12,7 +12,7 @@ from gym.wrappers import FlattenObservation
 
 class WorldMaker:
     @staticmethod
-    def make_env(path: str) -> FlattenObservation:
+    def make_env(path: str) -> GymEnvironment:
         print(f'Loading using YAML in {path}')
         inner_env = factory_env_from_yaml(path)
         state_representation = make_state_representation(
@@ -30,4 +30,4 @@ class WorldMaker:
         )
         env = GymEnvironment(outer_env)
 
-        return FlattenObservation(env)
+        return env
