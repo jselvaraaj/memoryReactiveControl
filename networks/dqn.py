@@ -3,6 +3,8 @@ import torch.nn as nn
 
 
 class DQN(nn.Module):
+
+    # The network gives q values for each action as output
     def __init__(self, input_dim, output_dim):
         super(DQN, self).__init__()
         self.input_dim = input_dim
@@ -15,5 +17,5 @@ class DQN(nn.Module):
             nn.Linear(128, self.output_dim)
         )
 
-    def forward(self, x):
-        return self.net(x)
+    def forward(self, state):
+        return self.net(state)

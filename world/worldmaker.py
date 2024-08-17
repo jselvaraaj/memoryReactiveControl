@@ -7,11 +7,12 @@ from gym_gridverse.representations.observation_representations import (
 from gym_gridverse.representations.state_representations import (
     make_state_representation,
 )
+from gym.wrappers import FlattenObservation
 
 
 class WorldMaker:
     @staticmethod
-    def make_env(path: str) -> GymEnvironment:
+    def make_env(path: str) -> FlattenObservation:
         print(f'Loading using YAML in {path}')
         inner_env = factory_env_from_yaml(path)
         state_representation = make_state_representation(
@@ -29,4 +30,4 @@ class WorldMaker:
         )
         env = GymEnvironment(outer_env)
 
-        return env
+        return FlattenObservation(env)
