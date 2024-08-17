@@ -1,16 +1,18 @@
 seed: 0
 use_cuda: true
 
-episode_length: 200
-num_episodes: 3
-log_interval: 10
+episode_length: 100
+num_episodes: 1e4
+test_num_episodes: 10
+step_log_interval: 20
+episode_log_interval: 100
 
 learning_rate: 1e4
 replay_buffer_memory: 1e4
 batch_size: 32
 
-policy_epsilon: 1e-1
-discount_factor: 0.99
+policy_epsilon: 25e-2
+discount_factor: 0.8
 
 policy_net:
-  hidden_layers: [ 128, 128 ]
+  hidden_layers: [ 256, 128, 64 ]

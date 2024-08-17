@@ -1,6 +1,7 @@
 outputs/
-Training Runs/
-Testing Runs/
+training_runs/
+testing_runs/
+model_registry
 
 
 # Byte-compiled / optimized / DLL files

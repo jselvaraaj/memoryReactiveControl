@@ -21,10 +21,10 @@ class DQNTrainer(DQNBase):
         self.episode_length = int(cfg.episode_length)
         self.num_episodes = int(cfg.num_episodes)
 
-        self.log_interval = int(cfg.log_interval)
+        self.step_log_interval = int(cfg.step_log_interval)
 
         self.state_dim = vectorize_state(self.env.state).shape[0]
-        self.logger = Logger("Training Runs")
+        self.logger = Logger("training_runs")
 
     def get_action(self, state):
         if torch.rand(1) < self.epsilon:
@@ -59,6 +59,7 @@ class DQNTrainer(DQNBase):
     def train(self):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
         loss_dict = defaultdict(list)
+        self.model.train()
 
         for episode_index in range(self.num_episodes):
             print(f'\nEpisode {episode_index + 1}')
@@ -88,14 +89,16 @@ class DQNTrainer(DQNBase):
                 state = next_state
                 if done:
                     break
-                if step_index % self.log_interval == 0:
+                if step_index % self.step_log_interval == 0:
                     loss_dict[step_index].append(loss.data.item())
                     losses = np.array(loss_dict[step_index])
                     mean_loss = np.mean(losses)
                     std_loss = np.std(losses)
 
-                    print('Step [{:6d}/{} ({:.0f}%)]\tLoss: {:.6e} ± {:.6e}'.format(
+                    print('Step [{:6d}/{} ({:.0f}%)]\tLoss: {:.6e} ± {:.6e}\t Action: '.format(
                         step_index, self.episode_length,
-                        100. * step_index / self.episode_length, mean_loss, std_loss))
+                        100. * step_index / self.episode_length, mean_loss, std_loss),
+                        self.env.outer_env.action_space.int_to_action(action), '\tQ Value: ', self.get_q_values(state))
 
         self.logger.plot_and_log_scalar(loss_dict, "Loss")
+        self.logger.writer.flush()

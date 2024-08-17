@@ -38,3 +38,4 @@ class Logger:
 
     def __del__(self):
         self.writer.flush()
+        self.writer.close()
