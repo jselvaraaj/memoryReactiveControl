@@ -7,7 +7,6 @@ from gym_gridverse.representations.observation_representations import (
 from gym_gridverse.representations.state_representations import (
     make_state_representation,
 )
-from gym.wrappers import FlattenObservation
 
 
 class WorldMaker:

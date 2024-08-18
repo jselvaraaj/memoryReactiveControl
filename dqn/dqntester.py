@@ -5,12 +5,12 @@ import torch
 
 from dqn.dqnbase import DQNBase
 from utils.logger import Logger
-from utils.utils import vectorize_state
+from utils.utils import vectorize_state, get_dtype
 
 
 class DQNTester(DQNBase):
-    def __init__(self, env, model, cfg):
-        super().__init__(env, model)
+    def __init__(self, env, model, cfg, device):
+        super().__init__(env, model, device)
         self.env = env
         self.model = model
         self.episode_length = int(cfg.episode_length)
@@ -20,19 +20,21 @@ class DQNTester(DQNBase):
         self.episode_log_interval = int(cfg.episode_log_interval)
         self.logger = Logger("testing_runs")
 
+        self.dtype = get_dtype(cfg.dtype)
+
     def test(self, visualize=False):
         self.model.eval()
         reward_dict = defaultdict(list)
         for episode_index in range(self.num_episodes):
             print(f'\n Testing Episode {episode_index + 1}')
             self.env.reset()
-            state = vectorize_state(self.env.state)
+            state = vectorize_state(self.env.state, self.dtype)
             done = False
             episode_frames = []
             for step_index in range(self.episode_length):
                 action = self.get_action(state)
                 next_obs, reward, done, _ = self.env.step(action)
-                state = vectorize_state(self.env.state)
+                state = vectorize_state(self.env.state, self.dtype)
                 if done:
                     break
                 reward_dict[step_index].append(reward)

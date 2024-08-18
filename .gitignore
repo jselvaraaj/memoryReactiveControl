@@ -3,7 +3,7 @@ training_runs/
 testing_runs/
 model_registry
 
-
+clearml.conf
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
