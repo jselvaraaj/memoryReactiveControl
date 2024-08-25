@@ -27,6 +27,6 @@ class WorldMaker:
             state_representation=state_representation,
             observation_representation=observation_representation,
         )
-        env = GymEnvironment(outer_env)
+        env = GymEnvironment(outer_env, render_mode='rgb_array_state')
 
         return env

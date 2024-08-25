@@ -1,20 +1,21 @@
 seed: 0
-use_cuda: true
-use_mps: true
-dtype: float32
-
-episode_length: 30
-num_episodes: 2
-test_num_episodes: 10
-step_log_interval: 20
-episode_log_interval: 100
-
-learning_rate: 1e4
-replay_buffer_memory: 1e4
-batch_size: 128
-
-policy_epsilon: 25e-2
-discount_factor: 0.8
 
 policy_net:
-  hidden_layers: [ 256, 128, 64 ]
+  hidden_layers: [ 64, 64 ]
+
+replay_buffer_memory: 1e4
+
+grid_feature_extraction:
+  embedding_dim: 8
+  cnn_output_dim: 64
+
+training:
+  num_steps: 1000
+  batch_size: 128
+  discount_factor: 0.8
+  exploration_initial_eps: 1.0
+  exploration_final_eps: 0.1
+  learning_rate: 1e-3
+  target_update_interval: 100
+  learning_starts: 100
+  log_interval: 100
