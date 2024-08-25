@@ -11,6 +11,7 @@ grid_feature_extraction:
 
 training:
   num_steps: 1000
+  max_episode_steps: 100
   batch_size: 128
   discount_factor: 0.8
   exploration_initial_eps: 1.0
@@ -18,4 +19,10 @@ training:
   learning_rate: 1e-3
   target_update_interval: 100
   learning_starts: 100
-  log_interval: 100
+  log_episode_interval: 4
+  train_freq: 1
+  gradient_steps: 2
+
+testing:
+  max_episode_steps: 100
+  n_eval_episodes: 10
