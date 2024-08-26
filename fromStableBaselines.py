@@ -76,9 +76,8 @@ def main(cfg: DictConfig):
     csv_filename = os.path.join(test_log_dir, 'test_results.monitor.csv')
     test_video_folder = os.path.join(test_log_dir, 'videos')
 
-    wrapped_test_env = Monitor(TimeLimit(WorldMaker.make_env('world/world.yaml'),
-                                         max_episode_steps=cfg.testing.max_episode_steps),
-                               filename=f"{csv_filename}")
+    wrapped_test_env = TimeLimit(WorldMaker.make_env('world/world.yaml'),
+                                 max_episode_steps=cfg.testing.max_episode_steps)
     wrapped_vec_env = make_vec_env(lambda: wrapped_test_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
 
     wrapped_vec_env.metadata["render_fps"] = cfg.testing.video.fps
