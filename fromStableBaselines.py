@@ -1,14 +1,14 @@
 from common.env_util import make_vec_env
 from common.evaluation import evaluate_policy
-from common.vec_env import SubprocVecEnv
-from matplotlib import pyplot as plt
+from common.vec_env import SubprocVecEnv, VecVideoRecorder, DummyVecEnv
+import multiprocessing
 from utils.featureextractor import GridVerseFeatureExtractor
 from stable_baselines3 import DQN
 import torch
 from world.worldmaker import WorldMaker
 import hydra
 from omegaconf import DictConfig
-from clearml import Task
+from clearml import Task, Logger
 import os
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.monitor import Monitor
@@ -19,15 +19,22 @@ from gymnasium.wrappers import TimeLimit
 def main(cfg: DictConfig):
     torch.set_printoptions(precision=4, sci_mode=False)
 
-    task = Task.init(project_name='Memory Reactive Control', tags=['DQN Sanity Check'])
+    task = Task.init(project_name='Memory Reactive Control', tags=['DQN Sanity Check'], reuse_last_task_id=False)
     task.connect(cfg)
 
     get_training_env = lambda: TimeLimit(WorldMaker.make_env('world/world.yaml'),
                                          max_episode_steps=cfg.training.max_episode_steps)
-    vec_env = make_vec_env(get_training_env, n_envs=4, seed=cfg.seed, vec_env_cls=SubprocVecEnv)
+    vec_env = make_vec_env(get_training_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
     # vec_env = get_training_env()
+
     train_log_dir = os.path.join('logs', 'train', task.id)
     os.makedirs(os.path.dirname(train_log_dir), exist_ok=True)
+
+    train_video_folder = os.path.join(train_log_dir, 'videos')
+    vec_env.metadata["render_fps"] = cfg.training.video.fps
+    vec_env = VecVideoRecorder(vec_env, train_video_folder,
+                               record_video_trigger=lambda x: x % cfg.training.video.record_step_interval == 0,
+                               video_length=cfg.training.video.length)
 
     torch.manual_seed(cfg.seed)
     model = DQN('MultiInputPolicy', vec_env, verbose=2,
@@ -55,6 +62,8 @@ def main(cfg: DictConfig):
     model.learn(total_timesteps=cfg.training.num_steps, log_interval=cfg.training.log_episode_interval,
                 progress_bar=True)
 
+    upload_video(train_video_folder, 'Training Video')
+
     print('Training done. Saving model')
     os.makedirs("model_registry", exist_ok=True)
     model.save(os.path.join("model_registry", f"{task.id}_dqn"))
@@ -62,27 +71,45 @@ def main(cfg: DictConfig):
 
     print('Testing the model')
 
-    csv_log_dir = os.path.join('logs', 'test', f"{task.id}")
-    os.makedirs(csv_log_dir, exist_ok=True)
-    csv_filename = os.path.join(csv_log_dir, 'test_results.monitor.csv')
-    wrapped_env = Monitor(TimeLimit(TimeLimit(WorldMaker.make_env('world/world.yaml'),
-                                              max_episode_steps=cfg.testing.max_episode_steps),
-                                    max_episode_steps=cfg.testing.max_episode_steps),
-                          filename=f"{csv_filename}")
+    test_log_dir = os.path.join('logs', 'test', f"{task.id}")
+    os.makedirs(test_log_dir, exist_ok=True)
+    csv_filename = os.path.join(test_log_dir, 'test_results.monitor.csv')
+    test_video_folder = os.path.join(test_log_dir, 'videos')
 
-    mean_reward, std_reward = evaluate_policy(model, wrapped_env, n_eval_episodes=cfg.testing.n_eval_episodes)
+    wrapped_test_env = Monitor(TimeLimit(WorldMaker.make_env('world/world.yaml'),
+                                         max_episode_steps=cfg.testing.max_episode_steps),
+                               filename=f"{csv_filename}")
+    wrapped_vec_env = make_vec_env(lambda: wrapped_test_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
+
+    wrapped_vec_env.metadata["render_fps"] = cfg.testing.video.fps
+    wrapped_vec_env = VecVideoRecorder(wrapped_vec_env, test_video_folder,
+                                       record_video_trigger=lambda x: x % cfg.testing.video.record_step_interval == 0,
+                                       video_length=cfg.testing.video.length)
+
+    mean_reward, std_reward = evaluate_policy(model, wrapped_vec_env, n_eval_episodes=cfg.testing.n_eval_episodes)
     print(f"Mean reward: {mean_reward:.2f} +/- {std_reward:.2f}")
+
+    upload_video(test_video_folder, 'Test Video')
 
     print('Testing done')
 
-    print('Plotting results')
-    results_plotter.plot_results(
-        [csv_log_dir], num_timesteps=1_0000, x_axis=results_plotter.X_TIMESTEPS, task_name="Gridverse DQN",
-    )
-    plt.show()
+    # print('Plotting results')
+    # results_plotter.plot_results(
+    #     [csv_log_dir], num_timesteps=1_0000, x_axis=results_plotter.X_TIMESTEPS, task_name="Gridverse DQN",
+    # )
+    # plt.show()
 
     task.close()
 
 
+def upload_video(folder_path: str, name: str):
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.mp4'):
+            file_path = os.path.join(folder_path, filename)
+            step = int(filename.split('-')[3])
+            Logger.current_logger().report_media('video', name, local_path=file_path, iteration=step)
+
+
 if __name__ == '__main__':
+    multiprocessing.set_start_method('spawn')
     main()
