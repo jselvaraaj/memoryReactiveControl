@@ -2,7 +2,7 @@ from typing import Dict
 
 import torch
 import gymnasium as gym
-from common.type_aliases import TensorDict
+from stable_baselines3.common.type_aliases import TensorDict
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor, NatureCNN
 from torch import nn
 

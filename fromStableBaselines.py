@@ -1,6 +1,6 @@
-from common.env_util import make_vec_env
-from common.evaluation import evaluate_policy
-from common.vec_env import SubprocVecEnv, VecVideoRecorder, DummyVecEnv
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecVideoRecorder, DummyVecEnv
 import multiprocessing
 from utils.featureextractor import GridVerseFeatureExtractor
 from stable_baselines3 import DQN
