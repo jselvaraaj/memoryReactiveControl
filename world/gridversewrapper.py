@@ -1,4 +1,7 @@
 from gym_gridverse.gym import GymEnvironment
+import gymnasium as gym
+from collections import deque
+import numpy as np
 
 
 class GridVerseWrapper(GymEnvironment):

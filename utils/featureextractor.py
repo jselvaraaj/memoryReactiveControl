@@ -22,8 +22,10 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
         total_concat_size = 0
         for key, subspace in observation_space.spaces.items():
             if key == 'grid':
+                if not isinstance(subspace, gym.spaces.Box):
+                    raise ValueError(f"Expected observation space to be of type 'Box', but got: {type(subspace)}")
                 # The i,j is grid co-ordinates. the last index is the grid object index type; for now we are ignoring the color and items in the grid
-                number_of_objects = subspace.high[0, 0, 0] - subspace.low[0, 0, 0] + 1
+                number_of_objects = subspace.high.flatten()[0] - subspace.low.flatten()[0] + 1
                 extractors[key] = GridFeatureExtractor(number_of_objects, grid_embedding_dim, cnn_output_dim, subspace)
                 total_concat_size += cnn_output_dim
             elif key == 'agent_id':
@@ -68,9 +70,18 @@ class GridFeatureExtractor(nn.Module):
 
         self.linear = nn.Sequential(nn.Linear(n_flatten, cnn_output_dim), nn.ReLU())
 
-    # Assuming input tensor order [batch_size, height, width, channels]
     def forward(self, x):
         x = x[..., 0].to(torch.int)  # just taking the grid object index type ignoring the color and items
-        embedding = self.embedding(x).permute(0, 3, 1, 2)
+        embedding = self.embedding(x)
+
+        if embedding.dim() == 4:
+            # [batch_size, height, width, channels] -> [batch_size, channels, height, width]
+            embedding = embedding.permute(0, 3, 1, 2)
+        elif embedding.dim() == 5:
+            # [batch_size, stacked_k_grids, height, width, channels] -> [batch_size, stacked_k_grids, channels, height, width]
+            embedding = embedding.permute(0, 1, 4, 2, 3)
+        else:
+            raise ValueError(f"Unsupported embedding tensor shape: {embedding.shape}")
+
         x = self.linear(self.cnn(embedding))
         return x
