@@ -10,7 +10,7 @@ grid_feature_extraction:
   cnn_output_dim: 64
 
 training:
-  num_steps: 10_000
+  num_steps: 10_00
   max_episode_steps: 100
   batch_size: 128
   discount_factor: 0.7

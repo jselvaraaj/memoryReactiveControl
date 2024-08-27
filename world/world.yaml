@@ -36,8 +36,8 @@ reward_functions:
     reward: -0.05
 
 observation_function:
-  name: fully_transparent
-  area: [ [ -7, 7 ], [-7, 7 ] ]
+  name: partially_occluded
+  area: [ [ -6, 0 ], [ -3, 3 ] ]
 
 terminating_function:
   name: reach_exit

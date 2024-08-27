@@ -2,6 +2,7 @@ outputs/
 training_runs/
 testing_runs/
 model_registry
+logs/
 
 clearml.conf
 # Byte-compiled / optimized / DLL files

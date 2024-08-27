@@ -50,10 +50,10 @@ class GridFeatureExtractor(nn.Module):
         self.embedding = nn.Embedding(number_of_objects, grid_embedding_dim)
 
         self.cnn = nn.Sequential(
-            nn.Conv2d(grid_embedding_dim, 32, kernel_size=6, stride=2, padding=0),
+            nn.Conv2d(grid_embedding_dim, 32, kernel_size=3, stride=2, padding=0),
             nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=0),
-            nn.ReLU(),
+            # nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=0),
+            # nn.ReLU(),
             # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=0),
             # nn.ReLU(),
             nn.Flatten(),

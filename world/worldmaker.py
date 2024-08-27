@@ -7,6 +7,7 @@ from gym_gridverse.representations.observation_representations import (
 from gym_gridverse.representations.state_representations import (
     make_state_representation,
 )
+from world.gridversewrapper import GridVerseWrapper
 
 
 class WorldMaker:
@@ -27,6 +28,6 @@ class WorldMaker:
             state_representation=state_representation,
             observation_representation=observation_representation,
         )
-        env = GymEnvironment(outer_env, render_mode='rgb_array')
+        env = GridVerseWrapper(outer_env, render_mode='rgb_array')
 
         return env

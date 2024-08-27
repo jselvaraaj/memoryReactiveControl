@@ -97,7 +97,7 @@ def main(cfg: DictConfig):
     #     [csv_log_dir], num_timesteps=1_0000, x_axis=results_plotter.X_TIMESTEPS, task_name="Gridverse DQN",
     # )
     # plt.show()
-
+    wrapped_vec_env.close()
     task.close()
 
 
