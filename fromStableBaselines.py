@@ -66,7 +66,9 @@ def main(cfg: DictConfig):
 
     print('Training done. Saving model')
     os.makedirs("model_registry", exist_ok=True)
-    model.save(os.path.join("model_registry", f"{task.id}_dqn"))
+    model_path = os.path.join("model_registry", f"{task.id}_dqn.zip")
+    model.save(model_path)
+    task.upload_artifact(name='SB3_DQN_Model', artifact_object=model_path)
     vec_env.close()
 
     print('Testing the model')
