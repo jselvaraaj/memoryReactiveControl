@@ -55,7 +55,7 @@ def main(cfg: DictConfig):
                                'features_extractor_class': GridVerseFeatureExtractor,
                                'features_extractor_kwargs': {
                                    'grid_embedding_dim': cfg.grid_feature_extraction.embedding_dim,
-                                   'cnn_output_dim': cfg.grid_feature_extraction.cnn_output_dim
+                                   'output_dim': cfg.grid_feature_extraction.cnn_output_dim
                                }
                                })
 

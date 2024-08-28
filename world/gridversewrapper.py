@@ -16,7 +16,7 @@ class GridVerseWrapper(GymEnvironment):
 
 
 class GridVerseFrameStackWrapper(gym.Wrapper):
-    def __init__(self, env, k):
+    def __init__(self, env, k=4):
         super().__init__(env)
         if not isinstance(env.observation_space, gym.spaces.Dict):
             raise ValueError(f"Expected observation space to be of type 'Dict', but got: {type(env.observation_space)}")
