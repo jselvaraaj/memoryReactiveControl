@@ -2,7 +2,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecVideoRecorder, DummyVecEnv
 import multiprocessing
-from utils.featureextractor import GridVerseFeatureExtractor
+from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
 from stable_baselines3 import DQN
 import torch
 from world.worldmaker import WorldMaker
@@ -55,7 +55,7 @@ def main(cfg: DictConfig):
                                'features_extractor_class': GridVerseFeatureExtractor,
                                'features_extractor_kwargs': {
                                    'grid_embedding_dim': cfg.grid_feature_extraction.embedding_dim,
-                                   'output_dim': cfg.grid_feature_extraction.cnn_output_dim
+                                   'cnn_output_dim': cfg.grid_feature_extraction.cnn_output_dim
                                }
                                })
 
