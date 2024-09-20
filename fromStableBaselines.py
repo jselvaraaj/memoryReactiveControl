@@ -5,6 +5,8 @@ import multiprocessing
 from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
 from stable_baselines3 import DQN
 import torch
+
+from utils.stubtask import StubTask
 from world.worldmaker import WorldMaker
 import hydra
 from omegaconf import DictConfig
@@ -19,22 +21,24 @@ from gymnasium.wrappers import TimeLimit
 def main(cfg: DictConfig):
     torch.set_printoptions(precision=4, sci_mode=False)
 
-    task = Task.init(project_name='Memory Reactive Control', tags=['DQN Sanity Check'], reuse_last_task_id=False)
+    # task = Task.init(project_name='Memory Reactive Control', tags=['DQN Sanity Check'], reuse_last_task_id=False)
+    task = StubTask()
+
     task.connect(cfg)
 
     get_training_env = lambda: TimeLimit(WorldMaker.make_env('world/world.yaml'),
                                          max_episode_steps=cfg.training.max_episode_steps)
     vec_env = make_vec_env(get_training_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
     # vec_env = get_training_env()
+    vec_env.metadata["render_fps"] = cfg.testing.video.fps
 
     train_log_dir = os.path.join('logs', 'train', task.id)
     os.makedirs(os.path.dirname(train_log_dir), exist_ok=True)
 
-    train_video_folder = os.path.join(train_log_dir, 'videos')
-    vec_env.metadata["render_fps"] = cfg.training.video.fps
-    vec_env = VecVideoRecorder(vec_env, train_video_folder,
-                               record_video_trigger=lambda x: x % cfg.training.video.record_step_interval == 0,
-                               video_length=cfg.training.video.length)
+    # train_video_folder = os.path.join(train_log_dir, 'videos')
+    # vec_env = VecVideoRecorder(vec_env, train_video_folder,
+    #                            record_video_trigger=lambda x: x % cfg.training.video.record_step_interval == 0,
+    #                            video_length=cfg.training.video.length)
 
     torch.manual_seed(cfg.seed)
     model = DQN('MultiInputPolicy', vec_env, verbose=2,
@@ -62,7 +66,7 @@ def main(cfg: DictConfig):
     model.learn(total_timesteps=cfg.training.num_steps, log_interval=cfg.training.log_episode_interval,
                 progress_bar=True)
 
-    upload_video(train_video_folder, 'Training Video')
+    # upload_video(train_video_folder, 'Training Video')
 
     print('Training done. Saving model')
     os.makedirs("model_registry", exist_ok=True)
@@ -90,7 +94,8 @@ def main(cfg: DictConfig):
     mean_reward, std_reward = evaluate_policy(model, wrapped_vec_env, n_eval_episodes=cfg.testing.n_eval_episodes)
     print(f"Mean reward: {mean_reward:.2f} +/- {std_reward:.2f}")
 
-    upload_video(test_video_folder, 'Test Video')
+    if not isinstance(task, StubTask):
+        upload_video(test_video_folder, 'Test Video')
 
     print('Testing done')
 

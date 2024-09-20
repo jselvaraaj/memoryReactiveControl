@@ -28,6 +28,7 @@ class WorldMaker:
             state_representation=state_representation,
             observation_representation=observation_representation,
         )
-        env = GridVerseFrameStackWrapper(GridVerseWrapper(outer_env, render_mode='rgb_array'))
+        # env = GridVerseFrameStackWrapper(GridVerseWrapper(outer_env, render_mode='rgb_array'))
+        env = GridVerseWrapper(outer_env, render_mode='rgb_array')
 
         return env

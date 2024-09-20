@@ -1,9 +1,8 @@
 import torch
 from torch import nn
 import gymnasium as gym
-from torch.nn import TransformerEncoderLayer, TransformerEncoder
 
-from featureextractors.stackedCNNfeatureextractor import StackedCNNFeatureExtractor
+from featureextractors.stacked.CNNfeatureextractor import StackedCNNFeatureExtractor
 
 
 class GridFrameStackedFeatureExtractor(nn.Module):
@@ -12,6 +11,8 @@ class GridFrameStackedFeatureExtractor(nn.Module):
         super().__init__()
         self.embedding = nn.Embedding(number_of_objects, grid_embedding_dim)
 
+        # [batch, seq_len,x,y,embedding_dim] . Note we are going to treat embdeding_dim as channels inside the CNN
+        # So this is equivalent to [batch, seq_len, x, y, channels]
         sample_obs = self.get_embedding(torch.as_tensor(observation_space.sample()[None]))
         self.stackedCNNFeatureExtractor = StackedCNNFeatureExtractor(embedding_dim=grid_embedding_dim,
                                                                      cnn_output_dim=cnn_output_dim,

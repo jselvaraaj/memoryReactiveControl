@@ -3,7 +3,7 @@ from torch import nn
 from torch.nn import TransformerEncoderLayer, TransformerEncoder
 
 
-class TransformerForStackedObservation(nn.Module):
+class TransformerForStackedFeatures(nn.Module):
     def __init__(self, sample_input: torch.Tensor, input_embedding_dim: int, nhead: int = 8, num_layers: int = 6,
                  output_dim: int = 128,
                  ):
