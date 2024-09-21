@@ -92,7 +92,8 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
             # concat_features dim is [batch, cnn_output_dim * 2]
             return torch.cat([grid_features, agent_id_feature], dim=1)
 
-    def forward(self, observations: TensorDict) -> torch.Tensor:
+    def forward(self, observations: TensorDict, hidden_state: torch.Tensor = None,
+                cell_state: torch.Tensor = None) -> torch.Tensor:
 
         grid_features = self.grid_feature_extractor(observations['grid'])
         agent_id_features = self.agent_id_feature_extractor(observations['agent_id_grid'])
@@ -100,4 +101,6 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
         concat_features = self.concat_features(grid_features, agent_id_features)
 
         # Returns [batch, seq_model_output_dim]
-        return self.seq_model(concat_features)
+        if hidden_state is None or cell_state is None:
+            return self.seq_model(concat_features)
+        return self.seq_model(concat_features, hidden_state, cell_state)

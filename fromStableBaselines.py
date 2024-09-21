@@ -15,6 +15,7 @@ import os
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.monitor import Monitor
 from gymnasium.wrappers import TimeLimit
+import logging
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="dqntraining")
@@ -23,10 +24,11 @@ def main(cfg: DictConfig):
 
     # task = Task.init(project_name='Memory Reactive Control', tags=['DQN Sanity Check'], reuse_last_task_id=False)
     task = StubTask()
-
     task.connect(cfg)
 
-    get_training_env = lambda: TimeLimit(WorldMaker.make_env('world/world.yaml'),
+    logging.getLogger("moviepy").setLevel(logging.ERROR)
+
+    get_training_env = lambda: TimeLimit(WorldMaker.make_env('world/world.yaml', cfg),
                                          max_episode_steps=cfg.training.max_episode_steps)
     vec_env = make_vec_env(get_training_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
     # vec_env = get_training_env()
@@ -41,14 +43,14 @@ def main(cfg: DictConfig):
     #                            video_length=cfg.training.video.length)
 
     torch.manual_seed(cfg.seed)
-    model = DQN('MultiInputPolicy', vec_env, verbose=2,
+    model = DQN('MlpPolicy', vec_env, verbose=2,
                 buffer_size=int(cfg.replay_buffer_memory),
                 batch_size=int(cfg.training.batch_size),
                 gamma=cfg.training.discount_factor,
                 learning_rate=cfg.training.learning_rate,
                 learning_starts=cfg.training.learning_starts,
                 target_update_interval=cfg.training.target_update_interval,
-                train_freq=cfg.training.train_freq,
+                train_freq=(cfg.training.train_freq, "episode"),
                 gradient_steps=cfg.training.gradient_steps,
                 exploration_initial_eps=cfg.training.exploration_initial_eps,
                 exploration_final_eps=cfg.training.exploration_final_eps,
@@ -56,11 +58,6 @@ def main(cfg: DictConfig):
                 tensorboard_log=train_log_dir,
                 policy_kwargs={'net_arch': cfg.policy_net.hidden_layers,  # Q network architecture
                                'normalize_images': False,
-                               'features_extractor_class': GridVerseFeatureExtractor,
-                               'features_extractor_kwargs': {
-                                   'grid_embedding_dim': cfg.grid_feature_extraction.embedding_dim,
-                                   'cnn_output_dim': cfg.grid_feature_extraction.cnn_output_dim
-                               }
                                })
 
     model.learn(total_timesteps=cfg.training.num_steps, log_interval=cfg.training.log_episode_interval,
@@ -82,7 +79,7 @@ def main(cfg: DictConfig):
     csv_filename = os.path.join(test_log_dir, 'test_results.monitor.csv')
     test_video_folder = os.path.join(test_log_dir, 'videos')
 
-    wrapped_test_env = TimeLimit(WorldMaker.make_env('world/world.yaml'),
+    wrapped_test_env = TimeLimit(WorldMaker.make_env('world/world.yaml', cfg),
                                  max_episode_steps=cfg.testing.max_episode_steps)
     wrapped_vec_env = make_vec_env(lambda: wrapped_test_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
 

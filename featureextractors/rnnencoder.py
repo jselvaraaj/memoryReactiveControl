@@ -23,14 +23,17 @@ class StatefulRNN(nn.Module):
 
         self.linear = nn.Sequential(nn.Linear(n_flatten, output_dim), nn.ReLU())
 
-    def forward(self, x):
+    def forward(self, x, hidden_state=None, cell_state=None):
         x = x.unsqueeze(dim=1)  # insert the sequence length dimension
         batch_size, seq_len, _ = x.size()
 
         # RNN forward pass
-        rnn_output, (h_n, c_n) = self.rnn(x)
+        if hidden_state is None or cell_state is None:
+            rnn_output, (h_n, c_n) = self.rnn(x)
+        else:
+            rnn_output, (h_n, c_n) = self.rnn(x, (hidden_state, cell_state))
 
         # aggregated_output dim is [batch, hidden_dim]
         aggregated_output = h_n[-1]  # Use the last stacked hidden state
         x = self.linear(aggregated_output)
-        return x
+        return x, h_n, c_n
