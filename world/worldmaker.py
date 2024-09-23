@@ -14,7 +14,7 @@ from world.gridversewrapper import GridVerseWrapper, GridVerseFrameStackWrapper
 
 class WorldMaker:
     @staticmethod
-    def make_env(path: str, cfg) -> gym.Env:
+    def make_env(path: str, environment_config) -> gym.Env:
         print(f'Loading using YAML in {path}')
         inner_env = factory_env_from_yaml(path)
         state_representation = make_state_representation(
@@ -32,8 +32,13 @@ class WorldMaker:
         )
         # env = GridVerseFrameStackWrapper(GridVerseWrapper(outer_env, render_mode='rgb_array'))
         env = GridVerseFeatureExtractorWrapper(GridVerseWrapper(outer_env, render_mode='rgb_array'),
-                                               cfg.grid_feature_extraction.embedding_dim,
-                                               cfg.grid_feature_extraction.cnn_output_dim,
-                                               cfg.grid_feature_extraction.seq_model_output_dim)
+                                               environment_config.gridverse_feature_extraction.embedding_dim,
+                                               environment_config.gridverse_feature_extraction.grid_cnn,
+                                               environment_config.gridverse_feature_extraction.agent_id_cnn,
+                                               environment_config.gridverse_feature_extraction.cnn_output_dim,
+                                               environment_config.gridverse_feature_extraction.seq_model.output_dim,
+                                               environment_config.gridverse_feature_extraction.seq_model.hidden_dim,
+                                               environment_config.gridverse_feature_extraction.seq_model.num_layers,
+                                               environment_config.gridverse_feature_extraction.seq_model.type)
 
         return env

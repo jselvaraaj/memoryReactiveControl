@@ -6,13 +6,14 @@ from featureextractors.CNNfeatureextractor import CNNFeatureExtractor
 
 
 class AgentIdFeatureExtractor(nn.Module):
-    def __init__(self, observation_space: gym.Space, output_dim: int):
+    def __init__(self, observation_space: gym.Space, output_dim: int, cnn_config):
         super().__init__()
         # Adding a channel and batch dim to sample observations
         self.CNNFeatureExtractor = CNNFeatureExtractor(embedding_dim=1, cnn_output_dim=output_dim,
                                                        sample_observations=torch.as_tensor(
                                                            observation_space.sample()[None][..., None]).permute(0, 3, 1,
-                                                                                                                2))
+                                                                                                                2)
+                                                       , config=cnn_config)
 
     def forward(self, x):
         x = x[..., None]  # adding a channel dim

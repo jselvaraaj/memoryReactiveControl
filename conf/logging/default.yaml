@@ -1,0 +1,8 @@
+training:
+  log_episode_interval: 2
+
+testing:
+  video:
+    record_step_interval: 10
+    length: 100
+    fps: 4

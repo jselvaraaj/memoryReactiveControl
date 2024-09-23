@@ -1,0 +1,16 @@
+policy_net:
+  hidden_layers: [ 64, 64, 64 ]
+
+replay_buffer_memory: 1e4
+
+training:
+  exploration_initial_eps: 1.0
+  exploration_final_eps: 0.1
+  target_update_interval: 100
+  learning_starts: 100
+  train_freq: 10
+  gradient_steps: 2
+
+testing:
+  max_episode_steps: 100
+  n_eval_episodes: 10

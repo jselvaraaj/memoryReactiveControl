@@ -16,9 +16,13 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
     def __init__(
             self,
             observation_space: gym.vector.utils.spaces.Dict,
-            grid_embedding_dim: int = 8,
-            cnn_output_dim: int = 256,
+            grid_embedding_dim: int,
+            grid_cnn_config=None,
+            agent_id_cnn_config=None,
+            cnn_output_dim: int = 128,
             seq_model_output_dim: int = 128,
+            seq_model_hidden_dim: int = 64,
+            seq_model_num_layers: int = 1,
             seq_model_type: str = 'rnn',
     ) -> None:
         # TODO we do not know features-dim here before going over all the items, so put something there. This is dirty!
@@ -37,7 +41,7 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
         # ndim = 4 means(seq_len, x, y, [object,color,item]])
         if ndim == 3:
             self.grid_feature_extractor = GridFeatureExtractor(number_of_objects, grid_embedding_dim, cnn_output_dim,
-                                                               grid_subspace)
+                                                               grid_subspace, grid_cnn_config)
         elif ndim == 4:
             self.is_stacked_frame = True
             self.grid_feature_extractor = GridFrameStackedFeatureExtractor(grid_subspace, number_of_objects,
@@ -52,7 +56,8 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
         if self.is_stacked_frame:
             self.agent_id_feature_extractor = AgentIdStackedFeatureExtractor(agent_id_subspace, cnn_output_dim)
         else:
-            self.agent_id_feature_extractor = AgentIdFeatureExtractor(agent_id_subspace, cnn_output_dim)
+            self.agent_id_feature_extractor = AgentIdFeatureExtractor(agent_id_subspace, cnn_output_dim,
+                                                                      agent_id_cnn_config)
 
         with torch.no_grad():
             sample_grid = torch.as_tensor(grid_subspace.sample()[None])
@@ -77,6 +82,8 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
             if self.seq_model_type == 'rnn':
                 self.seq_model = StatefulRNN(seq_model_input,
                                              input_embedding_dim=cnn_output_dim * 2,
+                                             hidden_dim=seq_model_hidden_dim,
+                                             num_layers=seq_model_num_layers,
                                              output_dim=seq_model_output_dim)
             else:
                 raise ValueError(f"Unsupported sequence model type: {self.seq_model_type}")

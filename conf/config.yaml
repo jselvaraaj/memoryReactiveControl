@@ -1,0 +1,7 @@
+seed: 0
+
+defaults:
+  - algorithm: dqn
+  - environment: gridverse
+  - hyperparameters: dqn
+  - logging: default

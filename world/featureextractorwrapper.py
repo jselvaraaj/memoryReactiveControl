@@ -13,14 +13,19 @@ def fix_obs(observation):
 
 
 class GridVerseFeatureExtractorWrapper(gym.Wrapper):
-    def __init__(self, env, grid_embedding_dim, cnn_output_dim, seq_model_output_dim, seq_model_type='rnn'):
+    def __init__(self, env, grid_embedding_dim, grid_cnn_config,
+                 agent_id_cnn_config, cnn_output_dim, seq_model_output_dim, seq_model_hidden_dim,
+                 seq_model_num_layers, seq_model_type='rnn'):
         super().__init__(env)
         if not isinstance(env.observation_space, gym.spaces.Dict):
             raise ValueError(f"Expected observation space to be of type 'Dict', but got: {type(env.observation_space)}")
 
         self.extractor = GridVerseFeatureExtractor(env.observation_space, grid_embedding_dim,
+                                                   grid_cnn_config,
+                                                   agent_id_cnn_config,
                                                    cnn_output_dim,
                                                    seq_model_output_dim,
+                                                   seq_model_hidden_dim, seq_model_num_layers,
                                                    seq_model_type)
         self.hidden_state = None
         self.cell_state = None
