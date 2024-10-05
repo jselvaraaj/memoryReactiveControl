@@ -1,12 +1,12 @@
 training:
-  total_num_steps: 10_000
+  total_num_steps: 10_000_0
 
-  max_episode_steps: 50
+  max_episode_steps: 40
   batch_size: 128
-  discount_factor: 0.8
+  discount_factor: 0.7
   learning_rate: 1e-3
 
-  num_env_steps_for_each_gradient_update: 128
+  num_env_steps_for_each_gradient_update: 256
   num_epochs_optimizing_surrogate_loss: 10
 
   gae_lambda: 0.95

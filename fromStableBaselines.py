@@ -129,6 +129,9 @@ def main(cfg: DictConfig):
                 log_interval=logging_config.training.log_episode_interval,
                 progress_bar=True)
 
+    # model = RecurrentPPO.load(os.path.join("model_registry", "48b251396ac1470887068cfe21bec887_RecurrentPPO.zip"),
+    #                           print_system_info=True)
+
     # upload_video(train_video_folder, 'Training Video')
 
     print('Training done. Saving model')

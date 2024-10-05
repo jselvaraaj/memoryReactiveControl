@@ -5,3 +5,4 @@ defaults:
   - environment: gridverse
   - hyperparameters: ppo
   - logging: default
+  - _self_

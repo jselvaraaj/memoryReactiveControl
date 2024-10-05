@@ -31,7 +31,7 @@ lstm:
   enable_critic_lstm: False
   shared_lstm: False # Whether to share the lstm between actor and critic
   lstm_hidden_size: 256
-  n_lstm_layers: 2
+  n_lstm_layers: 1
 
 mlp:
   policy_net:
