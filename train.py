@@ -101,8 +101,7 @@ def train(cfg: DictConfig, task=None):
     task.add_tags([model.__class__.__name__])
 
     model.learn(total_timesteps=hyperparams_config.training.total_num_steps,
-                log_interval=logging_config.training.log_episode_interval,
-                progress_bar=True)
+                log_interval=logging_config.training.log_episode_interval)
 
     print('Training done. Saving model')
     os.makedirs("model_registry", exist_ok=True)
