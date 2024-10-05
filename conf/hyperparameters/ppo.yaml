@@ -1,8 +1,8 @@
 training:
-  discount_factor: 0.7
+  discount_factor: 0.6
   learning_rate: 1e-3
 
-  total_num_steps: 10_000_0
+  total_num_steps: 10_000
 
   max_episode_steps: 40
   batch_size: 128

@@ -15,9 +15,9 @@ observation_space:
   colors: [ NONE ]
 
 reset_function:
-  name: empty
-  shape: [ 8, 8 ]
-  random_agent: True
+  name: rooms
+  shape: [ 7, 7 ]
+  layout: [ 2, 2 ]
 
 transition_functions:
   - name: move_agent

@@ -1,4 +1,5 @@
 seed: 0
+gridverse_env: gv_empty.8x8.yaml
 
 defaults:
   - algorithm: ppo

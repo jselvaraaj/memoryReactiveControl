@@ -1,3 +1,1 @@
-gridverse_env: world.yaml
-
 number_of_envs_to_run_parallelly: 1
