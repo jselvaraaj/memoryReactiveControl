@@ -1,5 +1,6 @@
 git+https://github.com/josndan/gym-gridverse.git@master
-stable-baselines3~=2.3.2
+git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib/
+stable-baselines3~=2.4.0
 hydra-core~=1.3.2
 matplotlib~=3.7.5
 tensorboard~=2.14.0

@@ -6,22 +6,23 @@ from featureextractors.CNNfeatureextractor import CNNFeatureExtractor
 
 
 class AgentIdFeatureExtractor(nn.Module):
-    def __init__(self, observation_space: gym.Space, output_dim: int, cnn_config):
+    def __init__(self, observation_space: gym.Space, config: dict):
         super().__init__()
+
+        output_dim = config['output_dim']
         # Adding a channel and batch dim to sample observations
         self.CNNFeatureExtractor = CNNFeatureExtractor(embedding_dim=1, cnn_output_dim=output_dim,
-                                                       sample_observations=torch.as_tensor(
-                                                           observation_space.sample()[None][..., None]).permute(0, 3, 1,
-                                                                                                                2)
-                                                       , config=cnn_config)
+                                                       sample_observations=self.get_embeddings(torch.as_tensor(
+                                                           observation_space.sample()[None]))
+                                                       , config=config)
 
-    def forward(self, x):
-        x = x[..., None]  # adding a channel dim
-
+    def get_embeddings(self, x):
+        x = x[..., None]
         if x.dim() == 4:
-            # [batch_size, height, width, channels] -> [batch_size, channels, height, width]
             x = x.permute(0, 3, 1, 2)
         else:
             raise ValueError(f"Unsupported embedding tensor shape: {x.shape}")
+        return x
 
-        return self.CNNFeatureExtractor(x)
+    def forward(self, x):
+        return self.CNNFeatureExtractor(self.get_embeddings(x))

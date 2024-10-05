@@ -1,31 +1,45 @@
+import gymnasium as gym
 import torch
 from torch import nn
-import gymnasium as gym
 
 from featureextractors.CNNfeatureextractor import CNNFeatureExtractor
 
 
 class GridFeatureExtractor(nn.Module):
-    def __init__(self, number_of_objects: int, grid_embedding_dim: int, cnn_output_dim: int,
-                 observation_space: gym.Space, cnn_config):
+    def __init__(self, number_of_grid_cell_types: int, number_of_grid_cell_states_per_cell_type: int,
+                 number_of_grid_colors: int, config: dict,
+                 observation_space: gym.Space):
         super().__init__()
-        self.embedding = nn.Embedding(number_of_objects, grid_embedding_dim)
 
-        self.cnn = CNNFeatureExtractor(embedding_dim=grid_embedding_dim, cnn_output_dim=cnn_output_dim,
-                                       sample_observations=self.embedding(torch.as_tensor(
-                                           observation_space.sample()[..., 0][None])).permute(0, 3, 1,
-                                                                                              2),
-                                       config=cnn_config)
+        embedding_dim = config['embedding_dim']
+        cnn_output_dim = config['output_dim']
+        self.number_of_grid_cell_types = number_of_grid_cell_types
+        self.number_of_grid_cell_states_per_cell_type = number_of_grid_cell_states_per_cell_type
+        self.number_of_grid_colors = number_of_grid_colors
 
-    def forward(self, x):
-        x = x[..., 0].to(torch.int)  # just taking the grid object index type ignoring the color and items
-        embedding = self.embedding(x)
+        self.embedding = nn.Embedding(
+            number_of_grid_cell_types * number_of_grid_cell_states_per_cell_type * number_of_grid_colors, embedding_dim)
+
+        self.cnn = CNNFeatureExtractor(embedding_dim=embedding_dim, cnn_output_dim=cnn_output_dim,
+                                       sample_observations=self.get_embeddings(torch.as_tensor(
+                                           observation_space.sample()[None])),
+                                       config=config)
+
+    def get_embeddings(self, x):
+        modified_index = x[..., 0] + \
+                         x[..., 1] * self.number_of_grid_cell_types + \
+                         x[..., 2] * self.number_of_grid_cell_types * self.number_of_grid_cell_states_per_cell_type
+        embedding = self.embedding(modified_index.to(torch.int))
 
         if embedding.dim() == 4:
-            # [batch_size, height, width, channels] -> [batch_size, channels, height, width]
+            # [batch_size, height, width, embedding_dim/channels] -> [batch_size, embedding_dim/channels, height, width]
             embedding = embedding.permute(0, 3, 1, 2)
         else:
             raise ValueError(f"Unsupported embedding tensor shape: {embedding.shape}")
 
+        return embedding
+
+    def forward(self, x):
+        embedding = self.get_embeddings(x)
         x = self.cnn(embedding)
         return x

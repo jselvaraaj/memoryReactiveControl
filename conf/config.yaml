@@ -1,7 +1,7 @@
 seed: 0
 
 defaults:
-  - algorithm: dqn
+  - algorithm: ppo
   - environment: gridverse
-  - hyperparameters: dqn
+  - hyperparameters: ppo
   - logging: default

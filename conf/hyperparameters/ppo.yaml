@@ -1,0 +1,16 @@
+training:
+  total_num_steps: 10_000_0
+  num_env_steps_for_each_gradient_update: 128
+  num_epochs_optimizing_surrogate_loss: 10
+  gae_lambda: 0.95
+  clip_range: 0.2
+  clip_range_vf: None
+  normalize_advantage: True
+  ent_coef: 0.0
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: None
+  max_episode_steps: 50
+  batch_size: 128
+  discount_factor: 0.8
+  learning_rate: 1e-6

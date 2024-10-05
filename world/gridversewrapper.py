@@ -8,9 +8,24 @@ class GridVerseWrapper(GymEnvironment):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Modify observation_space to convert int32 Box spaces to uint8 so that
+        # the combined feature extractor can be used
+        new_spaces = {}
+        for key, space in self.observation_space.spaces.items():
+            if isinstance(space, gym.spaces.Box) and space.dtype == np.int32:
+                new_spaces[key] = gym.spaces.Box(
+                    low=space.low.astype(np.uint8),
+                    high=space.high.astype(np.uint8),
+                    shape=space.shape,
+                    dtype=np.uint8
+                )
+            else:
+                new_spaces[key] = space
+        self.observation_space = gym.spaces.Dict(new_spaces)
+
     def render(self):
         rgb_arrays = super().render()
-        #Only using observations
+        # Only using observations
         ret = rgb_arrays[1] if len(rgb_arrays) == 2 else rgb_arrays[0]
         return ret
 

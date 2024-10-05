@@ -30,15 +30,5 @@ class WorldMaker:
             state_representation=state_representation,
             observation_representation=observation_representation,
         )
-        # env = GridVerseFrameStackWrapper(GridVerseWrapper(outer_env, render_mode='rgb_array'))
-        env = GridVerseFeatureExtractorWrapper(GridVerseWrapper(outer_env, render_mode='rgb_array'),
-                                               environment_config.gridverse_feature_extraction.embedding_dim,
-                                               environment_config.gridverse_feature_extraction.grid_cnn,
-                                               environment_config.gridverse_feature_extraction.agent_id_cnn,
-                                               environment_config.gridverse_feature_extraction.cnn_output_dim,
-                                               environment_config.gridverse_feature_extraction.seq_model.output_dim,
-                                               environment_config.gridverse_feature_extraction.seq_model.hidden_dim,
-                                               environment_config.gridverse_feature_extraction.seq_model.num_layers,
-                                               environment_config.gridverse_feature_extraction.seq_model.type)
-
+        env = GridVerseWrapper(outer_env, render_mode='rgb_array')
         return env
