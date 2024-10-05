@@ -3,19 +3,17 @@ import os
 
 import hydra
 import torch
-from clearml import Logger
+from clearml import Logger, Task
 from gymnasium.wrappers import TimeLimit
 from omegaconf import DictConfig
-from stable_baselines3 import DQN
+from sb3_contrib import RecurrentPPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
-from sb3_contrib import RecurrentPPO
 
 from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
 from utils.stubtask import StubTask
 from world.worldmaker import WorldMaker
-import numpy as np
 
 
 def setup_training_env(cfg, environment_config, hyperparams_config, logging_config):
@@ -64,8 +62,9 @@ def setup_testing_env(cfg, environment_config, algorithm_config, logging_config,
 def main(cfg: DictConfig):
     # Setup
     torch.set_printoptions(precision=4, sci_mode=False)
-    # task = Task.init(project_name='Memory Reactive Control', tags=['DQN Sanity Check'], reuse_last_task_id=False)
-    task = StubTask()
+    task = Task.init(project_name='Memory Reactive Control', tags=['RecurrentPPO Sanity Check'],
+                     reuse_last_task_id=False)
+    # task = StubTask()
     task.connect(cfg)
     torch.manual_seed(cfg.seed)
 
@@ -99,25 +98,24 @@ def main(cfg: DictConfig):
                          target_kl=hyperparams_config.training.target_kl,
                          stats_window_size=logging_config.training.stats_episode_window_size,
                          tensorboard_log=train_log_dir,
+                         use_sde=algorithm_config.use_sde,
                          policy_kwargs={
                              'activation_fn': torch.nn.ReLU if algorithm_config.activation_fn == 'ReLU' else torch.nn.Tanh,
-                             'use_sde': algorithm_config.use_sde,
                              'use_expln': algorithm_config.use_expln,
 
                              # Feature extractors
-                             'share_features_extractor': algorithm_config.feature_extractor.share_features_extractor,
+                             'share_features_extractor': algorithm_config.feature_extractor.share_feature_extractor,
                              'features_extractor_class': GridVerseFeatureExtractor,
                              'features_extractor_kwargs': {
-                                 'observation_space': vec_env.observation_space,
                                  'config': algorithm_config.feature_extractor,
                              },
                              'normalize_images': False,
 
                              # LSTM
-                             'enable_critic_lstm': algorithm_config.lstm.value_net.enable_critic_lstm,
-                             'shared_lstm': algorithm_config.lstm.policy_net.shared_lstm,
-                             'lstm_hidden_size': algorithm_config.lstm.policy_net.lstm_hidden_size,
-                             'n_lstm_layers': algorithm_config.lstm.policy_net.n_lstm_layers,
+                             'enable_critic_lstm': algorithm_config.lstm.enable_critic_lstm,
+                             'shared_lstm': algorithm_config.lstm.shared_lstm,
+                             'lstm_hidden_size': algorithm_config.lstm.lstm_hidden_size,
+                             'n_lstm_layers': algorithm_config.lstm.n_lstm_layers,
 
                              # MLP extractors
                              'net_arch': {

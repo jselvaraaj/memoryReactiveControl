@@ -25,13 +25,13 @@ feature_extractor:
         padding: 0
   items_encoder:
     embedding_dim: 8
-    layers: [ 128, 64, 32 ]
+    layers: [ 64, 32 ]
 
 lstm:
   enable_critic_lstm: False
   shared_lstm: False # Whether to share the lstm between actor and critic
-  lstm_hidden_size: 64
-  n_lstm_layers: 1
+  lstm_hidden_size: 256
+  n_lstm_layers: 2
 
 mlp:
   policy_net:
@@ -40,16 +40,16 @@ mlp:
     lstm_output_to_latent_features: [ 128, 64, 32 ]
 
 training:
-  num_env_steps_for_each_gradient_update: 128
+  num_env_steps_for_each_gradient_update: 256
   num_epochs_optimizing_surrogate_loss: 10
   gae_lambda: 0.95
   clip_range: 0.2
-  clip_range_vf: None
+  clip_range_vf: null
   normalize_advantage: True
   ent_coef: 0.0
   vf_coef: 0.5
   max_grad_norm: 0.5
-  target_kl: None
+  target_kl: null
 
 testing:
   max_episode_steps: 25

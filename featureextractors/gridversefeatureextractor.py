@@ -62,10 +62,14 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
                              config['items_encoder']['layers'][-1]
 
     def forward(self, observations: TensorDict) -> torch.Tensor:
-        grid_features = self.grid_feature_extractor(torch.tensor(observations['grid'], dtype=torch.int))
-        agent_id_features = self.agent_id_feature_extractor(
-            torch.tensor(observations['agent_id_grid'], dtype=torch.int))
-        items_features = self.items_feature_extractor(torch.tensor(observations['item'], dtype=torch.int))
+
+        observations['grid'] = observations['grid']
+        observations['agent_id_grid'] = observations['agent_id_grid']
+        observations['item'] = observations['item']
+
+        grid_features = self.grid_feature_extractor(observations['grid'])
+        agent_id_features = self.agent_id_feature_extractor(observations['agent_id_grid'])
+        items_features = self.items_feature_extractor(observations['item'])
 
         concat_features = torch.cat([grid_features, agent_id_features, items_features], dim=1)
 
