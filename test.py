@@ -15,10 +15,10 @@ from utils.stubtask import StubTask
 from world.worldmaker import WorldMaker
 
 
-def setup_testing_env(cfg, environment_config, algorithm_config, logging_config, test_video_folder):
+def setup_testing_env(cfg, hyperparams_config, logging_config, test_video_folder):
     wrapped_test_env = TimeLimit(
-        WorldMaker.make_env(f'./gridverse_conf/{cfg.gridverse_env}', environment_config),
-        max_episode_steps=algorithm_config.testing.max_episode_steps)
+        WorldMaker.make_env(f'./gridverse_conf/{cfg.gridverse_env}'),
+        max_episode_steps=hyperparams_config.testing.max_episode_steps)
     wrapped_vec_env = make_vec_env(lambda: wrapped_test_env, n_envs=1, seed=cfg.seed, vec_env_cls=DummyVecEnv)
 
     wrapped_vec_env.metadata["render_fps"] = logging_config.testing.video.fps
@@ -56,7 +56,7 @@ def test(cfg: DictConfig, test_model_task_id, task=None, ):
     algorithm_config, hyperparams_config, environment_config, logging_config = setup(task, cfg)
 
     test_log_dir, csv_log_dir, test_video_folder = setup_testing_log(task)
-    wrapped_vec_env = setup_testing_env(cfg, environment_config, algorithm_config, logging_config, test_video_folder)
+    wrapped_vec_env = setup_testing_env(cfg, hyperparams_config, logging_config, test_video_folder)
 
     print('Loading the model')
     model_name = f"{test_model_task_id}_RecurrentPPO.zip"

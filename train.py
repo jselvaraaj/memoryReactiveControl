@@ -56,8 +56,25 @@ def train(cfg: DictConfig, task=None):
     vec_env = setup_training_env(cfg, environment_config, hyperparams_config, logging_config)
     train_log_dir = setup_training_logging(task)
 
+    if False and torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    lr = hyperparams_config.training.learning_rate
+    if type(lr) != float:
+        if lr.type == 'step_decay':
+            initial_lr, progress_size, gamma = lr.initial_lr, lr.progress_size, lr.gamma
+
+            def step_lr(progress_remaining):
+                current_step = int((1 - progress_remaining) / progress_size)
+                return initial_lr * (gamma ** current_step)
+
+            lr = step_lr
+
     model = RecurrentPPO('MultiInputLstmPolicy', vec_env, verbose=2, seed=cfg.seed,
-                         learning_rate=hyperparams_config.training.learning_rate,
+                         device=device,
+                         learning_rate=lr,
                          n_steps=hyperparams_config.training.num_env_steps_for_each_gradient_update,
                          batch_size=int(hyperparams_config.training.batch_size),
                          n_epochs=hyperparams_config.training.num_epochs_optimizing_surrogate_loss,

@@ -1,0 +1,4 @@
+- hyperparameters.training.learning_rate=0.001
+- hyperparameters.training.discount_factor=0.5
+- hyperparameters.training.max_episode_steps=30
+- hyperparameters.training.batch_size=256

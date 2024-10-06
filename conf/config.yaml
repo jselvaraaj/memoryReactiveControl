@@ -1,5 +1,13 @@
 seed: 0
-gridverse_env: gv_empty.8x8.yaml
+gridverse_env: gv_keydoor.9x9.yaml
+
+hydra:
+  sweeper:
+    params:
+      hyperparameters.training.learning_rate: 1e-3, 1e-5
+      hyperparameters.training.discount_factor: 0.5, 0.8, 0.99
+      hyperparameters.training.max_episode_steps: 20, 30, 40
+      hyperparameters.training.batch_size: 64, 128, 256
 
 defaults:
   - algorithm: ppo
@@ -7,3 +15,4 @@ defaults:
   - hyperparameters: ppo
   - logging: default
   - _self_
+  - override hydra/launcher: joblib
