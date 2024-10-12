@@ -1,6 +1,7 @@
-activation_fn: Tanh
+activation_fn: ReLU
 use_sde: false
 use_expln: false
+
 feature_extractor:
   share_feature_extractor: true
   grid_encoder:
@@ -9,37 +10,34 @@ feature_extractor:
     output_dim: 32
     conv_layers:
       - in_channels: ${...embedding_dim}
-        out_channels: 32
-        kernel_size: 3
+        out_channels: 8
+        kernel_size: 5
         stride: 1
-        padding: 0
+        padding: 3
+      - in_channels: 8
+        out_channels: 16
+        kernel_size: 3
+        stride: 2
+        padding: 2
   agent_id_encoder:
     type: cnn
     output_dim: 32
     conv_layers:
       - in_channels: 1
-        out_channels: 32
+        out_channels: 16
         kernel_size: 3
         stride: 1
         padding: 0
   items_encoder:
-    embedding_dim: 8
-    layers:
-      - 64
-      - 32
+    embedding_dim: 16
+    layers: [ 64,32 ]
 lstm:
   enable_critic_lstm: false
-  shared_lstm: false
-  lstm_hidden_size: 256
-  n_lstm_layers: 1
+  shared_lstm: true
+  lstm_hidden_size: 128
+  n_lstm_layers: 2
 mlp:
   policy_net:
-    lstm_output_to_latent_features:
-      - 128
-      - 64
-      - 32
+    lstm_output_to_latent_features: [ 64, 32 ]
   value_net:
-    lstm_output_to_latent_features:
-      - 128
-      - 64
-      - 32
+    lstm_output_to_latent_features: [ 64, 32 ]

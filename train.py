@@ -19,7 +19,7 @@ from world.worldmaker import WorldMaker
 def setup_training_env(cfg, environment_config, hyperparams_config, logging_config):
     # Set up environment
     def get_training_env():
-        gridverse_env = WorldMaker.make_env(f'./gridverse_conf/{cfg.gridverse_env}', environment_config)
+        gridverse_env = WorldMaker.make_env(f'./gridverse_conf/{cfg.gridverse_env}')
         return TimeLimit(gridverse_env, max_episode_steps=hyperparams_config.training.max_episode_steps)
 
     vec_env = make_vec_env(get_training_env, n_envs=environment_config.number_of_envs_to_run_parallelly, seed=cfg.seed,
@@ -56,7 +56,8 @@ def train(cfg: DictConfig, task=None):
     vec_env = setup_training_env(cfg, environment_config, hyperparams_config, logging_config)
     train_log_dir = setup_training_logging(task)
 
-    if False and torch.backends.mps.is_available():
+    use_gpu = cfg.use_gpu
+    if use_gpu and torch.backends.mps.is_available():
         device = torch.device("mps")
     else:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

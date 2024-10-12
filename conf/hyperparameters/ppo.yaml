@@ -1,22 +1,29 @@
 training:
-  discount_factor: 0.5
-  learning_rate: 1e-2
+  discount_factor: 0.8
+  learning_rate: 5e-4
+  #    type: step_decay
+  #    initial_lr: 1e-3
+  #    progress_size: 0.002
+  #    gamma: 0.99
+
   max_episode_steps: 30
-
   total_num_steps: 1e5
-  batch_size: 128
 
+  batch_size: 64
   num_env_steps_for_each_gradient_update: 256
   num_epochs_optimizing_surrogate_loss: 10
+
+  ent_coef: 0.01
+  vf_coef: 0.5
+
   gae_lambda: 0.95
   clip_range: 0.2
+
   clip_range_vf: null
   normalize_advantage: true
-  ent_coef: 0.0
-  vf_coef: 0.5
   max_grad_norm: 0.5
   target_kl: null
-  
+
 testing:
-  max_episode_steps: 25
+  max_episode_steps: 30
   n_eval_episodes: 100

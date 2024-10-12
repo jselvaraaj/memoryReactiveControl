@@ -67,7 +67,7 @@ def test(cfg: DictConfig, test_model_task_id, task=None, ):
 
     print('Testing the model')
     mean_reward, std_reward = evaluate_policy(model, wrapped_vec_env,
-                                              n_eval_episodes=algorithm_config.testing.n_eval_episodes)
+                                              n_eval_episodes=hyperparams_config.testing.n_eval_episodes)
     print(f"Mean reward: {mean_reward:.2f} +/- {std_reward:.2f}")
 
     if not isinstance(task, StubTask):
