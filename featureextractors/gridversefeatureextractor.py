@@ -29,7 +29,7 @@ class GridVerseFeatureExtractor(BaseFeaturesExtractor):
         number_of_grid_colors = grid_subspace.high[..., 2].max() - grid_subspace.low[..., 2].min() + 1
 
         ndim = grid_subspace.high.ndim
-        # ndim = 3 means(x, y, [object,color,item]])
+        # ndim = 3 means(x, y, [object,state, color]])
         if ndim == 3:
             self.grid_feature_extractor = GridFeatureExtractor(number_of_grid_cell_types,
                                                                number_of_grid_cell_states_per_cell_type,

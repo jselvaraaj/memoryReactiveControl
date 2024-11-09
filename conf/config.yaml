@@ -1,5 +1,5 @@
 seed: 0
-gridverse_env: gv_memory.5x5.yaml
+gridverse_env: gv_memory_four_rooms.7x7.yaml
 use_gpu: false
 
 hydra:

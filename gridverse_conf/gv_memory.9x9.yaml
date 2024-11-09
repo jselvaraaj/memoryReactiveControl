@@ -25,14 +25,14 @@ transition_functions:
 
 reward_functions:
   - name: reach_exit_memory
-    reward_good: 5.0
-    reward_bad: -5.0
+    reward_good: 10.0
+    reward_bad: -10.0
   - name: living_reward
     reward: -0.05
 
 observation_function:
   name: partially_occluded
-  area: [ [ -6, 0 ], [-3, 3 ] ]
+  area: [ [ -6, 0 ], [ -3, 3 ] ]
 
 terminating_function:
   name: reach_exit

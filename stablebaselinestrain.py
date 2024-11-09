@@ -73,10 +73,16 @@ def train(cfg: DictConfig, task=None):
 
             lr = step_lr
 
+    if hyperparams_config.training.num_episodes_per_gradient_update is not None:
+        num_env_steps_for_each_gradient_update = hyperparams_config.training.num_episodes_per_gradient_update * \
+                                                 hyperparams_config.training.max_episode_steps
+    else:
+        num_env_steps_for_each_gradient_update = hyperparams_config.training.num_env_steps_for_each_gradient_update
+
     model = RecurrentPPO('MultiInputLstmPolicy', vec_env, verbose=2, seed=cfg.seed,
                          device=device,
                          learning_rate=lr,
-                         n_steps=hyperparams_config.training.num_env_steps_for_each_gradient_update,
+                         n_steps=num_env_steps_for_each_gradient_update,
                          batch_size=int(hyperparams_config.training.batch_size),
                          n_epochs=hyperparams_config.training.num_epochs_optimizing_surrogate_loss,
                          gamma=hyperparams_config.training.discount_factor,
@@ -118,7 +124,12 @@ def train(cfg: DictConfig, task=None):
                          )
     task.add_tags([model.__class__.__name__])
 
-    model.learn(total_timesteps=hyperparams_config.training.total_num_steps,
+    if 'total_num_episodes' in hyperparams_config.training:
+        total_num_steps = hyperparams_config.training.total_num_episodes * hyperparams_config.training.max_episode_steps
+    else:
+        total_num_steps = hyperparams_config.training.total_num_steps
+
+    model.learn(total_timesteps=total_num_steps,
                 log_interval=logging_config.training.log_episode_interval)
 
     print('Training done. Saving model')
