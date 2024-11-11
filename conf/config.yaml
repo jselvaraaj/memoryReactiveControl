@@ -1,19 +1,10 @@
 seed: 0
 gridverse_env: gv_memory_four_rooms.7x7.yaml
-use_gpu: false
-
-hydra:
-  sweeper:
-    params:
-      hyperparameters.training.learning_rate: 1e-3, 1e-5
-      hyperparameters.training.discount_factor: 0.5, 0.8, 0.99
-      hyperparameters.training.max_episode_steps: 20, 30, 40
-      hyperparameters.training.batch_size: 64, 128, 256
 
 defaults:
   - algorithm: ppo
   - environment: gridverse
   - hyperparameters: ppo
   - logging: default
+  - resources: default
   - _self_
-  - override hydra/launcher: joblib

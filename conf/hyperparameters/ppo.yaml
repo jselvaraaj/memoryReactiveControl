@@ -1,29 +1,32 @@
 training:
-  discount_factor: 0.95
   learning_rate: 1e-3
+  gamma: 0.95
 
-  max_episode_steps: 50
-  total_num_steps: 4e5
-  #  total_num_episodes: 6000
+  max_rollout_len: 50
+  train_batch_size_per_learner: 512
+  num_train_loop: 100
 
-  batch_size: 64
+  num_epochs: 10
+  minibatch_size: 64
+  shuffle_batch_per_epoch: false
 
-  num_episodes_per_gradient_update: 16
-  #  num_env_steps_for_each_gradient_update: 2048
+  grad_clip: 0.5
+  grad_clip_by: 'norm'
 
-  num_epochs_optimizing_surrogate_loss: 8
+  use_critic: false
+  use_gae: true
+  lambda_: 0.95
 
-  gae_lambda: 0.95
-  clip_range: 0.2
+  use_kl_loss: true
+  kl_coeff: 0.1
+  kl_target: null
 
-  clip_range_vf: null
-  normalize_advantage: true
+  vf_loss_coeff: 0.5
+  entropy_coeff: 0.003
 
-  ent_coef: 0.003
-  vf_coef: 0.5
+  clip_param: 0.2
+  vf_clip_param: null
 
-  max_grad_norm: 0.2
-  target_kl: null
 
 testing:
   max_episode_steps: 30

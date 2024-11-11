@@ -10,7 +10,7 @@ from sb3_contrib import RecurrentPPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv
 
-from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
+from featureextractors.gridversefeatureextractorstablebaselines import GridVerseFeatureExtractor
 from setup import setup
 from utils.stubtask import StubTask
 from world.worldmaker import WorldMaker

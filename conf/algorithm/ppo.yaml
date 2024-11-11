@@ -1,9 +1,4 @@
-activation_fn: ReLU
-use_sde: false
-use_expln: false
-
-feature_extractor:
-  share_feature_extractor: true
+encoder:
   grid_encoder:
     embedding_dim: 16
     type: cnn
@@ -26,13 +21,19 @@ feature_extractor:
   items_encoder:
     embedding_dim: 16
     layers: [ 32 ]
-lstm:
-  enable_critic_lstm: false
-  shared_lstm: true
-  lstm_hidden_size: 256
-  n_lstm_layers: 2
-mlp:
-  policy_net:
-    lstm_output_to_latent_features: [ 128, 32 ]
-  value_net:
-    lstm_output_to_latent_features: [ 256, 64, 32 ]
+
+# Head config
+head_fcnet_hiddens: [ 128, 128, 128 ]
+head_fcnet_activation: 'relu'
+head_fcnet_kernel_initializer: 'None'
+head_fcnet_bias_initializer: 'None'
+
+# Cont. actions
+vf_share_layers: false
+
+# Lstm config
+use_lstm: false
+max_seq_len: 20
+lstm_cell_size: 128
+lstm_kernel_initializer: 'None'
+lstm_bias_initializer: 'None'

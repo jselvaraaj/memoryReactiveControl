@@ -1,12 +1,13 @@
-from gym_gridverse.gym import GymEnvironment
-import gymnasium as gym
 from collections import deque
+
+import gymnasium as gym
 import numpy as np
+from gym_gridverse.gym import GymEnvironment
 
 
 class GridVerseWrapper(GymEnvironment):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, config_dict):
+        super().__init__(config_dict['outer_env'], config_dict['render_mode'])
 
         # Modify observation_space to convert int32 Box spaces to uint8 so that
         # the combined feature extractor can be used
@@ -14,13 +15,13 @@ class GridVerseWrapper(GymEnvironment):
         for key, space in self.observation_space.spaces.items():
             if isinstance(space, gym.spaces.Box) and space.dtype == np.int32:
                 new_spaces[key] = gym.spaces.Box(
-                    low=space.low.astype(np.uint8),
-                    high=space.high.astype(np.uint8),
+                    low=space.low.astype(np.int64),
+                    high=space.high.astype(np.int64),
                     shape=space.shape,
-                    dtype=np.uint8
+                    dtype=np.int64
                 )
             else:
-                new_spaces[key] = space
+                raise Exception("Found dtype other than int32 in gridverse observation space")
         self.observation_space = gym.spaces.Dict(new_spaces)
 
     def render(self):

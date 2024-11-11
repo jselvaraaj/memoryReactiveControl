@@ -1,6 +1,5 @@
 import torch
 from torch import nn, Tensor
-import gymnasium as gym
 
 
 class CNNFeatureExtractor(nn.Module):
