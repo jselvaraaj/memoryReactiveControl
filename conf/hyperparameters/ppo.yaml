@@ -4,9 +4,9 @@ training:
 
   max_rollout_len: 50
   train_batch_size_per_learner: 512
-  num_train_loop: 100
+  num_train_loop: 10
 
-  num_epochs: 10
+  num_epochs: 1
   minibatch_size: 64
   shuffle_batch_per_epoch: false
 
