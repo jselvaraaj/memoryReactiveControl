@@ -1,3 +1,3 @@
-num_env_runners: 1
-num_envs_per_env_runner: 1
+num_env_runners: 5
+num_envs_per_env_runner: 2
 num_cpus_per_env_runner: 1

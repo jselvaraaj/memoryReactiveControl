@@ -1,4 +1,3 @@
-import logging
 import random
 from pprint import pprint
 
@@ -11,7 +10,6 @@ from clearml import Task
 from omegaconf import DictConfig
 from ray.rllib.algorithms import PPOConfig
 from ray.rllib.core.rl_module import RLModuleSpec
-from ray.rllib.utils.from_config import NotProvided
 from ray.tune import register_env
 
 from catalogs.gridversePPOcatalog import GridVersePPOCatalog
@@ -65,26 +63,26 @@ def main(cfg: DictConfig):
         .training(
             lr=training_config.learning_rate,
             gamma=training_config.gamma,
-            train_batch_size_per_learner=training_config.train_batch_size_per_learner,
-            num_epochs=training_config.num_epochs,
-            minibatch_size=training_config.minibatch_size,
-            shuffle_batch_per_epoch=training_config.shuffle_batch_per_epoch,
-            grad_clip=training_config.grad_clip,
-            grad_clip_by=training_config.grad_clip_by,
-            use_critic=training_config.use_critic,
-            use_gae=training_config.use_gae,
-            lambda_=training_config.lambda_,
-            use_kl_loss=training_config.use_kl_loss,
-            kl_coeff=training_config.kl_coeff,
-            kl_target=(
-                training_config.kl_target
-                if training_config.kl_target is not None
-                else NotProvided
-            ),
-            vf_loss_coeff=training_config.vf_loss_coeff,
-            entropy_coeff=training_config.entropy_coeff,
-            clip_param=training_config.clip_param,
-            vf_clip_param=training_config.vf_clip_param,
+            # train_batch_size_per_learner=training_config.train_batch_size_per_learner,
+            # num_epochs=training_config.num_epochs,
+            # minibatch_size=training_config.minibatch_size,
+            # shuffle_batch_per_epoch=training_config.shuffle_batch_per_epoch,
+            # # grad_clip=training_config.grad_clip,
+            # # grad_clip_by=training_config.grad_clip_by,
+            # use_critic=training_config.use_critic,
+            # use_gae=training_config.use_gae,
+            # lambda_=training_config.lambda_,
+            # use_kl_loss=training_config.use_kl_loss,
+            # kl_coeff=training_config.kl_coeff,
+            # kl_target=(
+            #     training_config.kl_target
+            #     if training_config.kl_target is not None
+            #     else NotProvided
+            # ),
+            # vf_loss_coeff=training_config.vf_loss_coeff,
+            # entropy_coeff=training_config.entropy_coeff,
+            # clip_param=training_config.clip_param,
+            # vf_clip_param=training_config.vf_clip_param,
         )
         .learners(num_learners=resources_config.num_learner_workers)
         .resources(
@@ -116,7 +114,6 @@ def main(cfg: DictConfig):
         )
     )
     config.validate()
-    logging.getLogger("gymnasium").setLevel(logging.ERROR)
     algo = config.build()
 
     for i in range(training_config.num_train_loop):

@@ -22,9 +22,10 @@ encoder:
     embedding_dim: 16
     layers: [ 32 ]
 
+#ray/rllib/core/rl_module/default_model_config.py
 # Head config
-head_fcnet_hiddens: [ 128, 128, 128 ]
-head_fcnet_activation: 'relu'
+head_fcnet_hiddens: [ 128, 64, 32 ]
+head_fcnet_activation: 'tanh'
 head_fcnet_kernel_initializer: 'None'
 head_fcnet_bias_initializer: 'None'
 
