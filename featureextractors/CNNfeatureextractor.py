@@ -3,7 +3,7 @@ from torch import nn, Tensor
 
 
 class CNNFeatureExtractor(nn.Module):
-    def __init__(self, embedding_dim: int, cnn_output_dim: int, sample_observations: Tensor, config):
+    def __init__(self, cnn_output_dim: int, sample_observations: Tensor, config):
         super().__init__()
 
         layers = []

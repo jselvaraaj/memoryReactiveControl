@@ -7,6 +7,7 @@ from ray.rllib.algorithms.ppo.torch.ppo_torch_rl_module import PPOTorchRLModule
 from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
 
 
+# This is not used anywhere!
 class RayGridVerseModule(PPOTorchRLModule):
     def __init__(self, observation_space: gym.spaces.Dict, action_space: gym.spaces.Discrete, model_config: Dict, *args,
                  **kwargs):

@@ -1,13 +1,13 @@
 training:
   learning_rate: 1e-3
-  gamma: 0.6
+  gamma: 0.99
 
-  max_rollout_len: 30
-  train_batch_size_per_learner: 256
-  num_train_loop: 10
+  max_rollout_len: 64
+  train_batch_size_per_learner: 1024
+  num_train_loop: 20
 
-  num_epochs: 10
-  minibatch_size: 128
+  num_epochs: 8
+  minibatch_size: 64
   shuffle_batch_per_epoch: false
 
   grad_clip: 0.5
@@ -18,11 +18,11 @@ training:
   lambda_: 0.95
 
   use_kl_loss: false
-  kl_coeff: 0.1
-  kl_target: null
+  kl_coeff: 0.01
+  kl_target: 0.01
 
   vf_loss_coeff: 0.5
-  entropy_coeff: 0.000
+  entropy_coeff: 0.001
 
   clip_param: 0.2
   vf_clip_param: null

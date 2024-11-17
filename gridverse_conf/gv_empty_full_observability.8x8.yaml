@@ -15,9 +15,9 @@ observation_space:
   colors: [ NONE ]
 
 reset_function:
-  name: rooms
-  shape: [ 7, 7 ]
-  layout: [ 2, 2 ]
+  name: empty
+  shape: [ 8, 8 ]
+  random_agent: True
 
 transition_functions:
   - name: move_agent
@@ -36,8 +36,8 @@ reward_functions:
     reward: -0.05
 
 observation_function:
-  name: partially_occluded
-  area: [ [ -6, 0 ], [ -3, 3 ] ]
+  name: fully_transparent
+  area: [ [ -7, 7 ], [ -7, 7 ] ]
 
 terminating_function:
   name: reach_exit

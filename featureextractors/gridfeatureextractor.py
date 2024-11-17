@@ -20,7 +20,7 @@ class GridFeatureExtractor(nn.Module):
         self.embedding = nn.Embedding(
             number_of_grid_cell_types * number_of_grid_cell_states_per_cell_type * number_of_grid_colors, embedding_dim)
 
-        self.cnn = CNNFeatureExtractor(embedding_dim=embedding_dim, cnn_output_dim=cnn_output_dim,
+        self.cnn = CNNFeatureExtractor(cnn_output_dim=cnn_output_dim,
                                        sample_observations=self.get_embeddings(torch.as_tensor(
                                            observation_space.sample()[None])),
                                        config=config)

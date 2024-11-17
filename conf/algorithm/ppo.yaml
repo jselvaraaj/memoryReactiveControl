@@ -24,17 +24,17 @@ encoder:
 
 #ray/rllib/core/rl_module/default_model_config.py
 # Head config
-head_fcnet_hiddens: [ 128, 64, 32 ]
-head_fcnet_activation: 'tanh'
+head_fcnet_hiddens: [ 64, 32, 16 ]
+head_fcnet_activation: 'relu'
 head_fcnet_kernel_initializer: 'None'
 head_fcnet_bias_initializer: 'None'
 
 # Cont. actions
-vf_share_layers: false
+vf_share_layers: true
 
 # Lstm config
-use_lstm: false
-max_seq_len: 20
-lstm_cell_size: 128
+use_lstm: true
+max_seq_len: 2
+lstm_cell_size: 64
 lstm_kernel_initializer: 'None'
 lstm_bias_initializer: 'None'

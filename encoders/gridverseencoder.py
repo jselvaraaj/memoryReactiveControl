@@ -36,6 +36,7 @@ class GridversereEncoderConfig(ModelConfig):
         return (output_dim,)
 
 
+# This is override base encoder which is used in actor critic encoder
 class GridversereEncoder(TorchModel, Encoder):
 
     def __init__(self, config: GridversereEncoderConfig) -> None:

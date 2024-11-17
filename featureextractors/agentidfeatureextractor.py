@@ -1,6 +1,6 @@
+import gymnasium as gym
 import torch
 from torch import nn
-import gymnasium as gym
 
 from featureextractors.CNNfeatureextractor import CNNFeatureExtractor
 
@@ -11,7 +11,7 @@ class AgentIdFeatureExtractor(nn.Module):
 
         output_dim = config['output_dim']
         # Adding a channel and batch dim to sample observations
-        self.CNNFeatureExtractor = CNNFeatureExtractor(embedding_dim=1, cnn_output_dim=output_dim,
+        self.CNNFeatureExtractor = CNNFeatureExtractor(cnn_output_dim=output_dim,
                                                        sample_observations=self.get_embeddings(torch.as_tensor(
                                                            observation_space.sample()[None]))
                                                        , config=config)

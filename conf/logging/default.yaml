@@ -1,4 +1,4 @@
-log_level: ERROR
+log_level: WARN
 
 training:
   log_episode_interval: 2

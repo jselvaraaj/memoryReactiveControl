@@ -13,5 +13,8 @@ class GridVersePPOCatalog(PPOCatalog):
                             model_config_dict: dict,
                             action_space: gym.Space = None,
                             ) -> ModelConfig:
+        use_lstm = model_config_dict["use_lstm"]
+        if use_lstm:
+            return super()._get_encoder_config(observation_space, model_config_dict, action_space)
         return GridversereEncoderConfig(observation_space=observation_space,
                                         gridverse_encoder_config=model_config_dict['encoder'])
