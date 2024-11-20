@@ -3,11 +3,11 @@ training:
   gamma: 0.99
 
   max_rollout_len: 64
-  train_batch_size_per_learner: 1024
-  num_train_loop: 20
+  train_batch_size_per_learner: 1024 # timesteps
+  num_train_loop: 30
 
   num_epochs: 8
-  minibatch_size: 64
+  minibatch_size: 128 # timesteps
   shuffle_batch_per_epoch: false
 
   grad_clip: 0.5

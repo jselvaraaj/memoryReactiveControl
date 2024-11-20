@@ -48,39 +48,8 @@ class GridversereEncoder(TorchModel, Encoder):
 
         self.encoder = GridVerseFeatureExtractor(config.observation_space, config.gridverse_encoder_config)
 
-        # self._initial_weights = None  # Placeholder for initial weights
-        # self._checked_weights = False
-
     def _forward(self, input_dict: dict, **kwargs) -> dict:
-        # # Check weights on the first forward pass if not already checked
-        # if not self._checked_weights:
-        #     self.store_initial_weights()
-        #     self._checked_weights = True
-        # else:
-        #     self.are_weights_updated()
-
         observations = input_dict[Columns.OBS]
         output = self.encoder(observations)
         outputs = {ray_models.ENCODER_OUT: output}
         return outputs
-
-    # def store_initial_weights(self):
-    #     """Store the initial weights for later comparison."""
-    #     self._initial_weights = {name: param.clone() for name, param in self.named_parameters()}
-    #
-    # def are_weights_updated(self):
-    #     """Check if weights have been updated compared to the initial weights."""
-    #     if self._initial_weights is None:
-    #         raise ValueError("Initial weights have not been stored.")
-    #
-    #     updates_found = False
-    #     for name, param in self.named_parameters():
-    #         if not torch.equal(self._initial_weights[name], param):
-    #             updates_found = True
-    #             break
-    #     if not updates_found:
-    #         print("No weights have been updated.")
-    #     else:
-    #         print(f"Weights for have been updated.")
-    #
-    #     self.store_initial_weights()

@@ -10,11 +10,15 @@ import torch
 from clearml import Task
 from omegaconf import DictConfig
 from ray.rllib.algorithms import PPOConfig
+from ray.rllib.connectors.common import AddObservationsFromEpisodesToBatch, BatchIndividualItems, NumpyToTensor
+from ray.rllib.connectors.learner import AddColumnsFromEpisodesToTrainBatch, AddOneTsToEpisodesAndTruncate, \
+    GeneralAdvantageEstimation
 from ray.rllib.core.rl_module import RLModuleSpec
 from ray.rllib.utils.from_config import NotProvided
 from ray.tune import register_env
 
 from catalogs.gridversePPOcatalog import GridVersePPOCatalog
+from connectors.AddStatesFromEpisodesToBatchForDictSpace import AddStatesFromEpisodesToBatchForDictSpace
 from world.worldmaker import get_gridverse_env
 
 
@@ -55,7 +59,6 @@ def main(cfg: DictConfig):
     training_config = cfg.hyperparameters.training
     env_config = cfg.environment
     resources_config = cfg.resources
-
     config = (
         PPOConfig()
         .api_stack(
@@ -86,8 +89,19 @@ def main(cfg: DictConfig):
             entropy_coeff=training_config.entropy_coeff,
             clip_param=training_config.clip_param,
             vf_clip_param=training_config.vf_clip_param,
+            add_default_connectors_to_learner_pipeline=False,
+            learner_connector=lambda obs_space, action_space: [
+                AddOneTsToEpisodesAndTruncate(),
+                AddObservationsFromEpisodesToBatch(as_learner_connector=True),
+                AddColumnsFromEpisodesToTrainBatch(),
+                AddStatesFromEpisodesToBatchForDictSpace(as_learner_connector=True),
+                BatchIndividualItems(multi_agent=False),
+                NumpyToTensor(as_learner_connector=True, device="cpu"),
+                GeneralAdvantageEstimation(
+                    gamma=training_config.gamma, lambda_=training_config.lambda_
+                )
+            ]
         )
-
         .reporting(log_gradients=True)
         .debugging(
             log_level="DEBUG",
@@ -95,10 +109,12 @@ def main(cfg: DictConfig):
         )
         .rl_module(
             rl_module_spec=RLModuleSpec(
-                model_config=model_config, catalog_class=GridVersePPOCatalog
+                model_config=model_config,
+                catalog_class=GridVersePPOCatalog
             )
         )
         .environment(
+            # "CartPole-v1",
             "gridverse",
             env_config={
                 "path": f"./gridverse_conf/{env_path}",
@@ -134,7 +150,6 @@ def main(cfg: DictConfig):
     task.upload_artifact(
         name=f"rllib_{algo.__class__.__name__}", artifact_object=checkpoint
     )
-
     task.close()
 
 

@@ -26,8 +26,8 @@ encoder:
 # Head config
 head_fcnet_hiddens: [ 64, 32, 16 ]
 head_fcnet_activation: 'relu'
-head_fcnet_kernel_initializer: 'None'
-head_fcnet_bias_initializer: 'None'
+head_fcnet_kernel_initializer: 'xavier_uniform_'
+head_fcnet_bias_initializer: 'zeros_'
 
 # Cont. actions
 vf_share_layers: true
@@ -36,5 +36,5 @@ vf_share_layers: true
 use_lstm: true
 max_seq_len: 2
 lstm_cell_size: 64
-lstm_kernel_initializer: 'None'
-lstm_bias_initializer: 'None'
+lstm_kernel_initializer: 'xavier_uniform_'
+lstm_bias_initializer: 'zeros_'
