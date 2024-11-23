@@ -1,0 +1,11 @@
+seed: 0
+gridverse_env: gv_empty.8x8.yaml
+
+defaults:
+  - algorithm: ppo
+  - environment: gridverse
+  - hyperparameters: ppo
+  - evaluation: default
+  - logging: default
+  - resources: default
+  - _self_

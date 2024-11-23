@@ -2,7 +2,7 @@ import gymnasium as gym
 import numpy as np
 import torch
 
-from featureextractors.gridversefeatureextractorstablebaselines import GridVerseFeatureExtractor
+from stablebaselines.gridversefeatureextractorstablebaselines import GridVerseFeatureExtractor
 
 
 def fix_obs(observation):
