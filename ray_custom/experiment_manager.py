@@ -26,7 +26,7 @@ class ExperimentManager:
         print(f"Setting logging level to {self.log_level}")
 
         if self.log_level == "ERROR":
-            gym.logger.set_level(gym.logger.ERROR)
+            gym.logger.min_level = gym.logger.ERROR
             # Remember to set PYTHONWARNINGS=ignore::DeprecationWarning as env variable to control rllib warnings.
 
         self.ray_logger_config = ray.LoggingConfig(encoding="TEXT", log_level=self.log_level)

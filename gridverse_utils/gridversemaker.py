@@ -7,7 +7,7 @@ from gym_gridverse.representations.observation_representations import (
 from gym_gridverse.representations.state_representations import (
     make_state_representation,
 )
-from gymnasium.wrappers.time_limit import TimeLimit
+from gymnasium.wrappers import TimeLimit
 
 from gridverse_utils.gridversewrapper import GridVerseWrapper
 

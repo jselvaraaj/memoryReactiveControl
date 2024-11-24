@@ -2,8 +2,8 @@ checkpoint_frequency: 0
 checkpoint_at_end: true
 num_to_keep: 3
 
-num_samples: 4
-max_concurrent_trials: 4
+num_samples: 2
+max_concurrent_trials: 2
 num_cpu_per_trial: 2 # there's 10 cpus/cores/processors in my macbook
 max_time_limit_per_trial_seconds: 300
 global_time_budget: 1200

@@ -8,7 +8,6 @@ from ray.rllib.core.rl_module import RLModule
 from ray.rllib.env.env_runner import EnvRunner
 from ray.rllib.env.multi_agent_env_runner import MultiAgentEnvRunner
 from ray.rllib.env.single_agent_env_runner import SingleAgentEnvRunner
-from ray.rllib.evaluation import Episode
 from ray.rllib.evaluation.episode_v2 import EpisodeV2
 from ray.rllib.utils.images import resize
 from ray.rllib.utils.metrics.metrics_logger import MetricsLogger
@@ -30,7 +29,7 @@ class EnvRenderCallback(DefaultCallbacks):
     def on_episode_step(
             self,
             *,
-            episode: Union[EpisodeType, Episode, EpisodeV2],
+            episode: Union[EpisodeType, EpisodeV2],
             env_runner: Optional["EnvRunner"] = None,
             metrics_logger: Optional[MetricsLogger] = None,
             env: Optional[gym.Env] = None,
@@ -69,7 +68,7 @@ class EnvRenderCallback(DefaultCallbacks):
     def on_episode_end(
             self,
             *,
-            episode: Union[EpisodeType, Episode, EpisodeV2],
+            episode: Union[EpisodeType, EpisodeV2],
             env_runner: Optional["EnvRunner"] = None,
             metrics_logger: Optional[MetricsLogger] = None,
             env: Optional[gym.Env] = None,

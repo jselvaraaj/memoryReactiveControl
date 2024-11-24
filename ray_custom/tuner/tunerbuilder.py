@@ -27,7 +27,8 @@ class TunerBuilder:
             WandbLoggerCallback(
                 project=self.project_name,
                 upload_checkpoints=True,
-                tags=["rllib", cfg.gridverse_env, algo_class],
+                log_config=True,
+                tags=["rllib", cfg.gridverse_env, algo_class.__name__],
                 group=self.experiment_name,
                 job_type="sweep-trials",
             )
@@ -80,7 +81,7 @@ class TunerBuilder:
                 scheduler=scheduler,
                 num_samples=tuner_config.num_samples,
                 max_concurrent_trials=tuner_config.max_concurrent_trials,
-                time_budget_s=tuner_config.global_time_budget
+                time_budget_s=tuner_config.global_time_budget,
                 # reuse_actors=True, # PPO doesn't implement reset_config
             ),
         )
