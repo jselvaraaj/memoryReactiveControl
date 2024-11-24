@@ -2,8 +2,8 @@ import gymnasium as gym
 from ray.rllib.algorithms.ppo.ppo_catalog import PPOCatalog
 from ray.rllib.core.models.configs import ModelConfig
 
-from encoders.gridverseencoder import GridversereEncoderConfig
-from encoders.recurrentgridverseencoder import RecurrentGridverseEncoderConfig
+from ray_custom.encoders.gridverseencoder import GridversereEncoderConfig
+from ray_custom.encoders.recurrentgridverseencoder import RecurrentGridverseEncoderConfig
 
 
 class GridVersePPOCatalog(PPOCatalog):

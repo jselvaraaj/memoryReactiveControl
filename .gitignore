@@ -1,8 +1,4 @@
-outputs/
-training_runs/
-testing_runs/
-model_registry
-logs/
+runs/
 
 clearml.conf
 # Byte-compiled / optimized / DLL files

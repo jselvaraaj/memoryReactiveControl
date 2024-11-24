@@ -2,7 +2,6 @@ seed: 0
 gridverse_env: gv_empty.8x8.yaml
 include_dashboard: false
 
-
 defaults:
   - algorithm: ppo
   - environment: gridverse
@@ -12,3 +11,7 @@ defaults:
   - resources: default
   - tuner: default
   - _self_
+
+hydra:
+  run:
+    dir: ./runs/experiments-${now:%Y-%m-%d}/experiment-${now:%H-%M-%S}

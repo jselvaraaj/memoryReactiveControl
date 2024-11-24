@@ -9,7 +9,7 @@ from gym_gridverse.representations.state_representations import (
 )
 from gymnasium.wrappers.time_limit import TimeLimit
 
-from world.gridversewrapper import GridVerseWrapper
+from gridverse_utils.gridversewrapper import GridVerseWrapper
 
 
 class WorldMaker:

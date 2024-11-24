@@ -27,7 +27,7 @@ class TunerBuilder:
                 upload_checkpoints=True,
                 tags=["rllib", cfg.gridverse_env],
                 group=self.experiment_name,
-                job_type="train",
+                job_type="sweep-trials",
             )
         ]
 

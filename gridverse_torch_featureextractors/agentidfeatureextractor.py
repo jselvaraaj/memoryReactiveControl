@@ -2,7 +2,7 @@ import gymnasium as gym
 import torch
 from torch import nn
 
-from featureextractors.CNNfeatureextractor import CNNFeatureExtractor
+from gridverse_torch_featureextractors.CNNfeatureextractor import CNNFeatureExtractor
 
 
 class AgentIdFeatureExtractor(nn.Module):

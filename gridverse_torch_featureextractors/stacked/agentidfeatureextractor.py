@@ -1,8 +1,8 @@
+import gymnasium as gym
 import torch
 from torch import nn
-import gymnasium as gym
 
-from featureextractors.stacked.CNNfeatureextractor import StackedCNNFeatureExtractor
+from gridverse_torch_featureextractors.stacked.CNNfeatureextractor import StackedCNNFeatureExtractor
 
 
 class AgentIdStackedFeatureExtractor(nn.Module):

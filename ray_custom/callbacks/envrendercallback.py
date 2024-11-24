@@ -53,9 +53,9 @@ class EnvRenderCallback(DefaultCallbacks):
         else:
             image = env.render()
 
-        # Original render images for CartPole are 400x600 (hxw). We'll downsize here to
+        # Original render images for gridverse are 560x560 (hxw). We'll downsize here to
         # a very small dimension (to save space and bandwidth).
-        image = resize(image, 64, 96)
+        image = resize(image, 140, 140)
         # For WandB videos, we need to put channels first.
         image = np.transpose(image, axes=[2, 0, 1])
         # Add the compiled single-step image as temp. data to our Episode object.

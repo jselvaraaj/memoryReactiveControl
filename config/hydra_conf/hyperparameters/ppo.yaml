@@ -4,7 +4,7 @@ training:
 
   max_rollout_len: 64
   train_batch_size_per_learner: 1024 # timesteps
-  num_train_loop: 2
+  num_train_loop: 1
 
   num_epochs: 8
   minibatch_size: 128 # timesteps

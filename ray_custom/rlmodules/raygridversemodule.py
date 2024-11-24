@@ -4,7 +4,7 @@ import gymnasium as gym
 import torch
 from ray.rllib.algorithms.ppo.torch.ppo_torch_rl_module import PPOTorchRLModule
 
-from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
+from gridverse_torch_featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
 
 
 # This is not used anywhere!

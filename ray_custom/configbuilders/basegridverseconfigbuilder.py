@@ -1,4 +1,5 @@
-from ray.rllib.algorithms import AlgorithmConfig
+from pathlib import Path
+
 from ray.rllib.connectors.common import AddObservationsFromEpisodesToBatch, BatchIndividualItems, NumpyToTensor
 from ray.rllib.connectors.learner import AddOneTsToEpisodesAndTruncate, AddColumnsFromEpisodesToTrainBatch, \
     GeneralAdvantageEstimation
@@ -22,7 +23,7 @@ class BaseGridverseConfigBuilder:
         training_config = self._cfg.hyperparameters.training
         resources_config = self._cfg.resources
         evaluation_config = self._cfg.evaluation
-
+        current_dir = Path(__file__).parent
         self.algorithm_config = (
             self.algorithm_config
             .api_stack(
@@ -33,7 +34,7 @@ class BaseGridverseConfigBuilder:
             .reporting(log_gradients=False)
             .debugging(
                 log_level=log_level,
-                logger_config={"type": "ray.tune.logger.NoopLogger", "logdir": "./logs"},
+                logger_config={"type": "ray.tune.logger.NoopLogger"},
             )
             .rl_module(
                 rl_module_spec=RLModuleSpec(
@@ -44,7 +45,7 @@ class BaseGridverseConfigBuilder:
             .environment(
                 "gridverse",
                 env_config={
-                    "path": f"/Users/josdan/stuff/development/MemoryReactivePolicy/config/gridverse_conf/{env_path}",
+                    "path": str(current_dir / ".." / ".." / "config" / "gridverse_conf" / env_path),
                     "max_rollout_len": training_config.max_rollout_len,
                 }
             )
@@ -89,4 +90,4 @@ class BaseGridverseConfigBuilder:
         )
 
     def get_config(self):
-        return AlgorithmConfig.from_state(self.algorithm_config.get_state())
+        return self.algorithm_config.copy()

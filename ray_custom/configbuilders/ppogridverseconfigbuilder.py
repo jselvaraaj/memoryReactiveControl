@@ -31,6 +31,3 @@ class PPOGridverseConfigBuilder(BaseGridverseConfigBuilder):
                 vf_clip_param=training_config.vf_clip_param,
             )
         )
-
-    def get_config(self):
-        return PPOConfig.from_state(self.algorithm_config.get_state())

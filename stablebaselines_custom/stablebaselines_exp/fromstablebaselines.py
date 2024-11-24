@@ -4,8 +4,8 @@ import hydra
 from clearml import Task
 from omegaconf import DictConfig
 
-from stablebaselines_exp.stablebaselinestest import test
-from stablebaselines_exp.stablebaselinestrain import train
+from stablebaselines_custom.stablebaselines_exp.stablebaselinestest import test
+from stablebaselines_custom.stablebaselines_exp.stablebaselinestrain import train
 
 
 @hydra.main(version_base=None, config_path="../config/conf", config_name="config")

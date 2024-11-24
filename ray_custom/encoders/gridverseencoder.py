@@ -8,7 +8,7 @@ from ray.rllib.core.models.base import Encoder
 from ray.rllib.core.models.configs import ModelConfig
 from ray.rllib.core.models.torch.base import TorchModel
 
-from featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
+from gridverse_torch_featureextractors.gridversefeatureextractor import GridVerseFeatureExtractor
 
 
 @dataclass

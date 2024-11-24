@@ -1,6 +1,6 @@
 import os
 import random
-import uuid
+from pathlib import Path
 
 import gymnasium as gym
 import numpy as np
@@ -8,19 +8,19 @@ import omegaconf
 import ray
 import torch
 import wandb
-from ray.air.constants import TRAINING_ITERATION
 from ray.rllib.utils.metrics import ENV_RUNNER_RESULTS, EPISODE_RETURN_MEAN
 from ray.tune import register_env
 
+from gridverse_utils.gridversemaker import get_gridverse_env
 from ray_custom.callbacks.envrendercallback import EnvRenderCallback
 from ray_custom.configbuilders.basegridverseconfigbuilder import BaseGridverseConfigBuilder
 from ray_custom.tuner.tunerbuilder import TunerBuilder
 from ray_custom.utils import get_best_checkpoint
-from world.worldmaker import get_gridverse_env
+from ray_custom.wandb_helpers.utils import upload_videos_from_result_to_wandb
 
 
 class ExperimentManager:
-    def __init__(self, cfg, algorithm_config_builder: BaseGridverseConfigBuilder, project_name):
+    def __init__(self, cfg, algorithm_config_builder: BaseGridverseConfigBuilder, project_name, output_dir):
         self._cfg = cfg
         self.log_level = cfg.logging.log_level
         print(f"Setting logging level to {self.log_level}")
@@ -36,8 +36,9 @@ class ExperimentManager:
         np.random.seed(self._seed)
         torch.manual_seed(self._seed)
 
-        self.experiment_name = f"GridVerse-experiment-{uuid.uuid4().hex[:8]}"
-        self.best_checkpoint_path = None
+        self.output_dir = Path(output_dir)
+        self.experiment_name = self.output_dir.name
+        self.best_checkpoint = None
 
         register_env("gridverse", get_gridverse_env)
 
@@ -45,7 +46,7 @@ class ExperimentManager:
         self.ray_context = None
         self.project_name = project_name
         self.default_wandb_tags = ["rllib", self._cfg.gridverse_env]
-        self.wandb_path = "../wandb"
+        self.wandb_path = str(self.output_dir / "wandb")
 
     def setup_ray(self):
         self.ray_context = ray.init(include_dashboard=self._cfg.include_dashboard,
@@ -57,6 +58,7 @@ class ExperimentManager:
         return self.ray_context
 
     def train(self):
+
         wandb_config = omegaconf.OmegaConf.to_container(
             self._cfg, resolve=True, throw_on_missing=True
         )
@@ -70,33 +72,32 @@ class ExperimentManager:
             dir=self.wandb_path
 
         )
-
         algorithm_config = (
             self.algorithm_config_builder.get_config().debugging(
-                logger_config={"type": "ray.tune.logger.TBXLogger", "logdir": "./logs"},
+                logger_config={"type": "ray.tune.logger.TBXLogger",
+                               "logdir": str(self.output_dir / "rllib_logs")},
             ))
         algorithm = algorithm_config.build()
         wandb_run.tags += (algorithm.__class__.__name__,)
 
         training_config = self._cfg.hyperparameters.training
         for i in range(training_config.num_train_loop):
-            result = algorithm.train()
+            algorithm.train()
 
-        model_path = os.path.abspath(os.path.join("model_registry", f"{wandb_run.id}_{algorithm.__class__.__name__}"))
-        os.makedirs(model_path, exist_ok=True)
-        algorithm.save(model_path)
+        algorithm_checkpoint_registry_path = str(
+            self.output_dir / "rllib_algorithm_checkpoint_registry" / f"{wandb_run.id}_{algorithm.__class__.__name__}")
+        os.makedirs(algorithm_checkpoint_registry_path, exist_ok=True)
+        algorithm.save(algorithm_checkpoint_registry_path)
         wandb.log_model(
-            path=model_path,
+            path=algorithm_checkpoint_registry_path,
             name=f"rllib_{algorithm.__class__.__name__}"
         )
 
-        self.best_checkpoint_path = model_path
+        self.best_checkpoint = {"path": algorithm_checkpoint_registry_path, "wandb_run_id": wandb_run.id}
 
         wandb.finish()
 
-        self.evaluate()
-
-    def sweep(self, checkpoint_metric=f"{ENV_RUNNER_RESULTS}/{EPISODE_RETURN_MEAN}",
+    def sweep(self, stop_conditions, checkpoint_metric=f"{ENV_RUNNER_RESULTS}/{EPISODE_RETURN_MEAN}",
               checkpoint_mode="max"):
         wandb_run = wandb.init(
             project=self.project_name,
@@ -105,13 +106,6 @@ class ExperimentManager:
             job_type="sweep",
             dir=self.wandb_path
         )
-        stop_conditions = {
-            ENV_RUNNER_RESULTS: {
-                EPISODE_RETURN_MEAN: 4
-            },
-            # f"{NUM_ENV_STEPS_SAMPLED_LIFETIME}": 2048,
-            TRAINING_ITERATION: 2,
-        }
         tuner = TunerBuilder(self.project_name, self.experiment_name, self._cfg,
                              self.algorithm_config_builder, stop_conditions).get_tuner("pbt")
 
@@ -120,18 +114,16 @@ class ExperimentManager:
         results = tuner.fit()
 
         checkpoints = results.get_best_result().best_checkpoints
-        self.best_checkpoint_path = get_best_checkpoint(checkpoints, checkpoint_metric, checkpoint_mode).path
-
+        self.best_checkpoint = {"path": get_best_checkpoint(checkpoints, checkpoint_metric, checkpoint_mode).path,
+                                "wandb_run_id": wandb_run.id}
         wandb.finish()
 
     def evaluate(self):
-        if self.best_checkpoint_path is None:
+        if self.best_checkpoint is None:
             raise Exception("No checkpoint is available to evaluate")
         wandb_run = wandb.init(
             project=self.project_name,
-            config={
-                "checkpoint_path": self.best_checkpoint_path
-            },
+            config=self.best_checkpoint,
             tags=self.default_wandb_tags,
             group=self.experiment_name,
             job_type="eval",
@@ -150,16 +142,19 @@ class ExperimentManager:
             )
         ).build()
 
-        eval_algorithm.restore_from_path(path=self.best_checkpoint_path)
+        eval_algorithm.restore_from_path(path=self.best_checkpoint['path'])
 
         wandb_run.tags += (eval_algorithm.__class__.__name__,)
 
         result = eval_algorithm.evaluate()
 
+        upload_videos_from_result_to_wandb(result)
         wandb.finish()
+        self.best_checkpoint = None
 
     def __del__(self):
         self.exit_ray()
 
-    def exit_ray(self):
+    @staticmethod
+    def exit_ray():
         ray.shutdown()

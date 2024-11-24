@@ -4,9 +4,9 @@ import gymnasium as gym
 import torch
 from torch import nn
 
-from featureextractors.agentidfeatureextractor import AgentIdFeatureExtractor
-from featureextractors.gridfeatureextractor import GridFeatureExtractor
-from featureextractors.itemsfeatureextractor import ItemsFeatureExtractor
+from gridverse_torch_featureextractors.agentidfeatureextractor import AgentIdFeatureExtractor
+from gridverse_torch_featureextractors.gridfeatureextractor import GridFeatureExtractor
+from gridverse_torch_featureextractors.itemsfeatureextractor import ItemsFeatureExtractor
 
 TensorDict = Dict[str, torch.Tensor]
 
