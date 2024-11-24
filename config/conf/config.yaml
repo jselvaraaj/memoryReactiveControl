@@ -1,5 +1,7 @@
 seed: 0
 gridverse_env: gv_empty.8x8.yaml
+include_dashboard: false
+
 
 defaults:
   - algorithm: ppo
@@ -8,4 +10,5 @@ defaults:
   - evaluation: default
   - logging: default
   - resources: default
+  - tuner: default
   - _self_

@@ -1,5 +1,5 @@
 evaluation_interval: 0
-evaluation_duration: 100
+evaluation_duration: 10
 evaluation_duration_unit: "episodes"
 evaluation_parallel_to_training: false
 evaluation_force_reset_envs_before_iteration: true

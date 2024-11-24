@@ -1,13 +1,3 @@
 log_level: DEBUG
 
 # DEBUG
-
-training:
-  log_episode_interval: 2
-  stats_episode_window_size: 100
-
-testing:
-  video:
-    record_step_interval: 1
-    length: 25
-    fps: 4
