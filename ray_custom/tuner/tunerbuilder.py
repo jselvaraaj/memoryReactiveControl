@@ -21,11 +21,13 @@ class TunerBuilder:
         self.algorithm_config_builder = algorithm_config_builder
         self.log_level = 1 if self.cfg.logging.log_level != "DEBUG" else 2
 
+        algo_class = algorithm_config_builder.get_config().algo_class
+
         self.callbacks = [
             WandbLoggerCallback(
                 project=self.project_name,
                 upload_checkpoints=True,
-                tags=["rllib", cfg.gridverse_env],
+                tags=["rllib", cfg.gridverse_env, algo_class],
                 group=self.experiment_name,
                 job_type="sweep-trials",
             )
@@ -59,13 +61,14 @@ class TunerBuilder:
         scheduler = PopulationBasedTrainingBuilder(tuner_config.population_based_training).build()
 
         return tune.Tuner(
-            algorithm_config.algo_class,
+            tune.with_resources(algorithm_config.algo_class, {"cpu": tuner_config.num_cpu_per_trial}),
             param_space=algorithm_config,
             run_config=air.RunConfig(
                 stop=FunctionStopper(stopper),
                 verbose=self.log_level,
                 callbacks=self.callbacks,
                 checkpoint_config=air.CheckpointConfig(
+                    num_to_keep=tuner_config.num_to_keep,
                     checkpoint_frequency=tuner_config.checkpoint_frequency,
                     checkpoint_at_end=tuner_config.checkpoint_at_end,
                 ),
@@ -76,6 +79,8 @@ class TunerBuilder:
                 mode="max",
                 scheduler=scheduler,
                 num_samples=tuner_config.num_samples,
+                max_concurrent_trials=tuner_config.max_concurrent_trials,
+                time_budget_s=tuner_config.global_time_budget
                 # reuse_actors=True, # PPO doesn't implement reset_config
             ),
         )

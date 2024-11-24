@@ -1,6 +1,6 @@
 seed: 0
 gridverse_env: gv_empty.8x8.yaml
-include_dashboard: false
+include_dashboard: true
 
 defaults:
   - algorithm: ppo

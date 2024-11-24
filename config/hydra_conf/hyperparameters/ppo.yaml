@@ -2,9 +2,9 @@ training:
   learning_rate: 1e-3
   gamma: 0.99
 
-  max_rollout_len: 64
+  max_rollout_len: 50
   train_batch_size_per_learner: 1024 # timesteps
-  num_train_loop: 1
+  num_train_loop: 100
 
   num_epochs: 8
   minibatch_size: 128 # timesteps
