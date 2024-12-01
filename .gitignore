@@ -1,4 +1,7 @@
 runs/
+*.pt
+wandb/
+
 
 clearml.conf
 # Byte-compiled / optimized / DLL files

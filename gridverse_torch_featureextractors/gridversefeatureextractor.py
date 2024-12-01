@@ -55,9 +55,9 @@ class GridVerseFeatureExtractor(nn.Module):
                                                              config['items_encoder'], item_subspace)
 
     def forward(self, observations: TensorDict) -> torch.Tensor:
-        observations['grid'] = observations['grid']
-        observations['agent_id_grid'] = observations['agent_id_grid']
-        observations['item'] = observations['item']
+        # observations['grid'] = observations['grid']
+        # observations['agent_id_grid'] = observations['agent_id_grid']
+        # observations['item'] = observations['item']
 
         grid_features = self.grid_feature_extractor(observations['grid'])
         agent_id_features = self.agent_id_feature_extractor(observations['agent_id_grid'])

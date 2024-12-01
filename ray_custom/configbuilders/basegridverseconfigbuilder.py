@@ -24,6 +24,7 @@ class BaseGridverseConfigBuilder:
         resources_config = self._cfg.resources
         evaluation_config = self._cfg.evaluation
         current_dir = Path(__file__).parent
+        lr = training_config.learning_rate
         self.algorithm_config = (
             self.algorithm_config
             .api_stack(
@@ -67,7 +68,7 @@ class BaseGridverseConfigBuilder:
                 evaluation_force_reset_envs_before_iteration=evaluation_config.evaluation_force_reset_envs_before_iteration,
                 evaluation_num_env_runners=evaluation_config.evaluation_num_env_runners,
             ).training(
-                lr=training_config.learning_rate,
+                lr=[tuple(lis) for lis in lr] if isinstance(lr, list) else lr,
                 gamma=training_config.gamma,
                 train_batch_size_per_learner=training_config.train_batch_size_per_learner,
                 num_epochs=training_config.num_epochs,

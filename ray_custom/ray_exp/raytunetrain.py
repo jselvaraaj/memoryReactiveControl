@@ -2,6 +2,7 @@ import hydra
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig
 from ray.air.constants import TRAINING_ITERATION
+from ray.rllib.utils.metrics import ENV_RUNNER_RESULTS, EPISODE_RETURN_MEAN
 from ray.tune.result import TIME_TOTAL_S
 
 from ray_custom.configbuilders.ppogridverseconfigbuilder import PPOGridverseConfigBuilder
@@ -16,9 +17,9 @@ def main(cfg: DictConfig):
     experiment = ExperimentManager(cfg, ppo_gridverse_config_builder, project_name, output_dir)
 
     stop_conditions = {
-        # ENV_RUNNER_RESULTS: {
-        #     EPISODE_RETURN_MEAN: 4
-        # },
+        ENV_RUNNER_RESULTS: {
+            EPISODE_RETURN_MEAN: 5
+        },
         # f"{NUM_ENV_STEPS_SAMPLED_LIFETIME}": 2048,
         TRAINING_ITERATION: cfg.hyperparameters.training.num_train_loop,
         TIME_TOTAL_S: cfg.tuner.max_time_limit_per_trial_seconds

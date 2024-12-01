@@ -1,6 +1,7 @@
 import os
 import random
 from pathlib import Path
+from pprint import pprint
 
 import gymnasium as gym
 import numpy as np
@@ -74,7 +75,7 @@ class ExperimentManager:
         )
         algorithm_config = (
             self.algorithm_config_builder.get_config().debugging(
-                logger_config={"type": "ray.tune.logger.TBXLogger",
+                logger_config={"type": "ray.tune.logger.UnifiedLogger",
                                "logdir": str(self.output_dir / "rllib_logs")},
             ))
         algorithm = algorithm_config.build()
@@ -82,7 +83,9 @@ class ExperimentManager:
 
         training_config = self._cfg.hyperparameters.training
         for i in range(training_config.num_train_loop):
-            algorithm.train()
+            result = algorithm.train()
+            result.pop("config")
+            pprint(result)
 
         algorithm_checkpoint_registry_path = str(
             self.output_dir / "rllib_algorithm_checkpoint_registry" / f"{wandb_run.id}_{algorithm.__class__.__name__}")

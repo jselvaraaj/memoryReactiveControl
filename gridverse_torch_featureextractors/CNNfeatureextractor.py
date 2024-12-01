@@ -13,6 +13,7 @@ class CNNFeatureExtractor(nn.Module):
                                     kernel_size=layer_cfg.kernel_size,
                                     stride=layer_cfg.stride,
                                     padding=layer_cfg.padding))
+            # layers.append(nn.BatchNorm2d(layer_cfg.out_channels))
             layers.append(nn.ReLU())
         layers.append(nn.Flatten())
         self.cnn = nn.Sequential(*layers)

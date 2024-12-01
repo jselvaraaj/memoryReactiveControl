@@ -13,7 +13,9 @@ class PopulationBasedTrainingBuilder:
             "lr": [1e-3, 5e-4, 1e-4, 5e-5, 1e-5],
             "num_epochs": lambda: random.randint(1, 30),
             "minibatch_size": lambda: random.randint(128, 16384),
-            "train_batch_size_per_learner": lambda: random.randint(2000, 160000),
+            "train_batch_size_per_learner": lambda: random.randint(1024, 2 ^ 12),
+            "entropy_coeff": lambda: random.uniform(0.001, 5 * 0.001),
+            "clip_param": lambda: random.uniform(0.2, 0.8),
         }
 
     def build(self):
