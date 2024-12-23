@@ -2,6 +2,8 @@
 
 This repository contains experiments for partially observable grid world environments in [**GridVerse**](https://github.com/abaisero/gym-gridverse) with **Stable Baselines**, and **RLlib**.
 
+![Key door POMDP](https://raw.githubusercontent.com/jselvaraaj/memoryReactiveControl/303b6020e47546e92fc2cc3b50eb58b8bfd6690a/key_door.gif)
+
 ## Key Feature
 
 Custom networks for gridverse dict observations. This network at a high level is a CNN followed by an optional RNN. To make this work, custom encoder where implmeneted in stabelines and custom catlog, connectors and encoders in rllib. Hydra is used for config management.
