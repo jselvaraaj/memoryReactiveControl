@@ -54,7 +54,7 @@ pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pyglet==1.5.27
 Pygments==2.18.0
-PyJWT==2.8.0
+PyJWT==2.15.0
 pyparsing==3.1.4
 python-dateutil==2.9.0.post0
 pytz==2024.1
